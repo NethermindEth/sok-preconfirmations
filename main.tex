@@ -119,22 +119,22 @@ email address or ORCID}
 \todo{coherency in american/british english}
 \todo{rewrite intro}
 
-Since the early days of blockchains, it has been well known that by design the system can handle only a limited number of transactions (txs) per second. Meanwhile, traditional centralised payment systems can seamlessly cope with thousands of transactions per second in a quick and efficient way. This scalability issue could seriously impede wide adoption and it was a necessity to solve it to improve Web3 user's experience (UX).
+% Since the early days of blockchains, it has been well known that by design the system can handle only a limited number of transactions (txs) per second. Meanwhile, traditional centralised payment systems can seamlessly cope with thousands of transactions per second in a quick and efficient way. This scalability issue could seriously impede wide adoption and it was a necessity to solve it to improve Web3 user's experience (UX).
 
-\cm{Going into L2s in a 2nd paragraph before introducing preconfs is probably too confusing.}
-Layer 2s were introduced as a solution to blockchain's scalability trilemma. First formalised by Vitalik Buterin, blockchain's scalability trilemma states that no blockchain system can be decentralised, scalable and secure. The main concept of a layer 2 is to offload transaction volume from its underlying layer 1 blockchain and provide increased throughput with lower transaction fees. \textit{Rollups} are a prime example of a layer 2 solution. Rollup transactions are executed on a separate layer 2 blockchain and aggregated or "rolled-up" in batches that are then recorded on layer 1 as single transactions. Thus, rollups achieve scalability by maintaining the security of layer 1.
+% \cm{Going into L2s in a 2nd paragraph before introducing preconfs is probably too confusing.}
+% Layer 2s were introduced as a solution to blockchain's scalability trilemma. First formalised by Vitalik Buterin, blockchain's scalability trilemma states that no blockchain system can be decentralised, scalable and secure. The main concept of a layer 2 is to offload transaction volume from its underlying layer 1 blockchain and provide increased throughput with lower transaction fees. \textit{Rollups} are a prime example of a layer 2 solution. Rollup transactions are executed on a separate layer 2 blockchain and aggregated or "rolled-up" in batches that are then recorded on layer 1 as single transactions. Thus, rollups achieve scalability by maintaining the security of layer 1.
 
-Moreover, the transition from Proof of Work (PoW) to Proof of Stake (PoS) in 2022 revolutionised Ethereum and opened up new possibilities. Transaction finality became explicit, block-production rate stabilised, and the whole consensus system became more predictable. Miners were replaced by validators, and time, which was perceived as an abstract concept in the PoW era, was now quantised in epochs divided to 32 slots of 12 seconds \lo{what do we mean by time as "abstract concept" in PoW? And is it important in context of preconfs?} \dk{For PoW, real time outside the chain has no meaning onchain. The Difficulty Adjustment mechanism aims to keep block-production rate to a block every 10 mins (on average) but interblock times are random and follow a Poisson distribution. PoS works like a normal clock and there's a new slot every exactly 12seconds. I only used it as a motive to introduce the concept of slots and epochs because it is related to my PhD research and I am quite familiar with it, but it does not necessarily need to be included.}. In each slot, one of the validators earns the right to act as a \textit{proposer} and build a new block for the chain. The list of upcoming proposers for the current epoch, is called \textit{lookahead} and is known in advance. Layer 2s have their own \textit{L2 proposer} or \textit{L2 sequencer} who is an entity that batches L2 transactions into L2 blocks and then submits them to the L2 smart contract deployed on L1\cite{W:AnatomyofaSlot:Thetumultuous12secondsduringEthereumslots}. \lo{Flow is confusing, we talk about the lookahead, then talk about the L2 sequencer who usually are centralized and not related to lookahead.} 
+% Moreover, the transition from Proof of Work (PoW) to Proof of Stake (PoS) in 2022 revolutionised Ethereum and opened up new possibilities. Transaction finality became explicit, block-production rate stabilised, and the whole consensus system became more predictable. Miners were replaced by validators, and time, which was perceived as an abstract concept in the PoW era, was now quantised in epochs divided to 32 slots of 12 seconds \lo{what do we mean by time as "abstract concept" in PoW? And is it important in context of preconfs?} \dk{For PoW, real time outside the chain has no meaning onchain. The Difficulty Adjustment mechanism aims to keep block-production rate to a block every 10 mins (on average) but interblock times are random and follow a Poisson distribution. PoS works like a normal clock and there's a new slot every exactly 12seconds. I only used it as a motive to introduce the concept of slots and epochs because it is related to my PhD research and I am quite familiar with it, but it does not necessarily need to be included.}. In each slot, one of the validators earns the right to act as a \textit{proposer} and build a new block for the chain. The list of upcoming proposers for the current epoch, is called \textit{lookahead} and is known in advance. Layer 2s have their own \textit{L2 proposer} or \textit{L2 sequencer} who is an entity that batches L2 transactions into L2 blocks and then submits them to the L2 smart contract deployed on L1\cite{W:AnatomyofaSlot:Thetumultuous12secondsduringEthereumslots}. \lo{Flow is confusing, we talk about the lookahead, then talk about the L2 sequencer who usually are centralized and not related to lookahead.} 
 
-Furthermore, the idea that block builders can extract value and increase their profit by reordering the transactions they include in a block was becoming more and more prominent. 
+% Furthermore, the idea that block builders can extract value and increase their profit by reordering the transactions they include in a block was becoming more and more prominent. 
 %Although the idea of Maximum Extractable Value (MEV) was originally cultivated for PoW, PoS's predetermined slot time and proposer lookahead provided fertile ground for it to flourish \lo{is it really fair to say PoS accelerated MEV? PoW already had mev-boost. Also, why are we introducing MEV here, doesn't seem important for introducing preconfs?}\dk{Well, MEV became much bigger with PBS which was developed for PoS. We should probably move PBS and MEV in the preliminaries section though}. 
-Gradually, MEV extraction became very sophisticated and led to Proposer-Builder Separation (PBS). \cm{why is PBS being introduced here?} In a PBS setting, proposers outsource the duty of building blocks to specialised entities called builders. Flashbots' MEV-Boost became the most predominant implementation of PBS and is so popular at the moment that 90\% of Ethereum blocks are created with it.
+% Gradually, MEV extraction became very sophisticated and led to Proposer-Builder Separation (PBS). \cm{why is PBS being introduced here?} In a PBS setting, proposers outsource the duty of building blocks to specialised entities called builders. Flashbots' MEV-Boost became the most predominant implementation of PBS and is so popular at the moment that 90\% of Ethereum blocks are created with it.
 
-However, despite layer 2 creation and PoS's transaction finality explicitness, the barrier of 12 second delay for transaction confirmation persisted. 
-\cm{first mention of preconfs, this is too late.}
-Therefore, \textit{preconfirmations} were proposed as a way to provide users with an early guarantee that their transaction will be included or executed on-chain, giving them a sense of "soft finality".
+% However, despite layer 2 creation and PoS's transaction finality explicitness, the barrier of 12 second delay for transaction confirmation persisted. 
+% \cm{first mention of preconfs, this is too late.}
+% Therefore, \textit{preconfirmations} were proposed as a way to provide users with an early guarantee that their transaction will be included or executed on-chain, giving them a sense of "soft finality".
 
-Although the idea of preconfirming transactions is believed to have originated from earlier Bitcoin projects \lo{source?}\dk{\cite{W:Preconfirmations:Explained}}, the stimulus for preconfirmations was an article called "Based Preconfirmations" by Ethereum Foundation's researcher Justin Drake released in 2023~\cite{W:Basedpreconfirmations} \lo{preconfs existed before "based" through centralized sequencers. we need to think about how we mention centralized sequencers.}. Ever since, various early implementations, interesting theoretical designs, and conflicting opinions have arisen but they remain scattered and unstructured. 
+% Although the idea of preconfirming transactions is believed to have originated from earlier Bitcoin projects \lo{source?}\dk{\cite{W:Preconfirmations:Explained}}, the stimulus for preconfirmations was an article called "Based Preconfirmations" by Ethereum Foundation's researcher Justin Drake released in 2023~\cite{W:Basedpreconfirmations} \lo{preconfs existed before "based" through centralized sequencers. we need to think about how we mention centralized sequencers.}. Ever since, various early implementations, interesting theoretical designs, and conflicting opinions have arisen but they remain scattered and unstructured. 
 
 The purpose of this SoK is to conjugate and systematise knowledge around preconfirmations in a single resource and provide a common language. Our goal is to create a comprehensive and objective report that can be used as an entry point for beginners and a reference point for experts in the field. Finally, we conclude this paper with a list of open challenges to encourage future research on preconfirmations.
 
@@ -147,6 +147,7 @@ and \cite{W:AwesomeBasedPreconfirmations} puts together a collection of resource
 
 
 \section{Background} 
+\todoqb{check bolding of key terms}
 \cm{Find an SOK/article that defines these things, and say that we are inline with that source.}
 \todocm{find the right place to introduce the preconf abbrev.}
 % \subsection{Layer 1}
@@ -156,34 +157,35 @@ This section outlines the established blockchain concepts necessary to understan
 % We begin in Section~\ref{sec:txs} by defining core blockchain and distributed system concepts. Following this, Section~\ref{sec:L1_consensus} describes how Ethereum L1 reaches consensus among distributed network participants on the state of the ledger. Proceeding, Section~\ref{sec:L1_pipeline} outlines the L1 block-building pipeline. Section~\ref{sec:intro_mev} describes Maximal Extractable Value (MEV), which plays an important role in the motivation for preconfirmations, while also standing as a barrier to their implementation. Finally, Section~\ref{sec:intro_pbs} describes Proposer-Builder Separation, an architectural solution to address MEV among other things, which is tightly intertwined with the L1 block-building pipeline and the preconfirmation solutions that are emerging.
 
     \subsection{Blockchain Fundamentals}
-    Blockchains are replicated state machines that maintain an eventually consistent shared state among a set of distributed, potentially distrusting, peers. For the purpose of this article we focus on transaction-based blockchains which form the majority of blockchains today. These blockchains advance the shared state by sequentially executing an ordered list of transactions. 
+    For the purpose of this document, we consider a \textbf{blockchain} \textbf{(L1)} as both the protocol and data structure used to derive a replicated state machine among a set of distributed, potentially distrusting, peers. Although the rules and data structure are intended to derive a single shared state for observers who follow the blockchain protocol, social consensus determines the true shared state, allowing potentially conflicting states to emerge. In this document, we assume blockchains derive a single shared state. Furthermore, we focus on transaction-based blockchains which form the majority of blockchains today. These blockchains advance the shared state by sequentially executing an ordered list of transactions. \textbf{Inclusion} is the process of adding a transaction to the ordered list of transactions, and \textbf{execution} is the computation of a transaction's result, thereby updating the shared state. This distinction is critical for delineating the types of preconfirmations that can be given.
     
-    The Ethereum blockchain and the state it implies is managed by a set of privileged entities known as validators. Validators in Ethereum are staked entities, who are required to maintain a minimum balance of ether, the native Ethereum gas token. Validators attest to and occasionally propose blocks of transactions to be executed on the shared Ethereum state machine. The exact protocol for progressing the Ethereum blockchain is not critical to understanding preconfirmations, although we highlight the key components in Section~\ref{sec:L1_pipeline}.
+    As the archetypal implementation of a transaction-based state machine, we focus on Ethereum.
+    The Ethereum blockchain and the state it implies is managed by a set of privileged entities known as \textbf{validators}. Validators in Ethereum are staked entities, who are required to maintain a minimum balance of ether, the native Ethereum gas token. Validators attest to and occasionally propose blocks of transactions to be executed on the shared Ethereum state machine. The exact protocol for progressing the Ethereum blockchain is not critical to understanding preconfirmations, although we highlight the key components in Section~\ref{sec:L1_pipeline}.
 
-    Ethereum is a smart-contract enabled blockchain. Smart contracts can be considered as a collection of code/functions, data, and state within the global state of a blockchain \cite{W:IntroductionToSmartContracts} that enable applications to be built on and trustlessly executed by transactions on the underlying blockchain. In the context of preconfirmations, smart contracts serve as critical components for coordinating and enforcing preconfirmations.
+    Ethereum is a smart-contract enabled blockchain. \textbf{Smart contracts} can be considered as a collection of code/functions, data, and state within the global state of a blockchain \cite{W:IntroductionToSmartContracts} that enable applications to be built on and trustlessly executed by transactions on the underlying blockchain. In the context of preconfirmations, smart contracts serve as critical components for coordinating and enforcing preconfirmations.
     
     \subsection{Ethereum's Block-Building Pipeline}
     \label{sec:L1_pipeline}
-    Ethereum has a well-defined set of roles and processes. Proposers hold exclusive rights over block construction and proposal to extend the canonical chain during their assigned 12-second slots. When it comes to preconfirmations, proposers must play a key role. To understand preconfirmations, a prerequisite is to understand the current process through which blocks are built and eventually proposed to L1. We call this the \textbf{block-building pipeline}. The remainder of this section outlines Ethereum's typical block-building pipeline, from which many L1s and L2s often derive their respective block-building pipelines. \\
+    Ethereum has a well-defined set of roles and processes. Proposers hold exclusive rights over block construction and proposal to extend the blockchain during their assigned 12-second slots. When it comes to preconfirmations, proposers must play a key role. To understand preconfirmations, a prerequisite is to understand the current process through which blocks are built and eventually proposed to L1. We call this the \textbf{block-building pipeline}. The remainder of this section outlines Ethereum's typical block-building pipeline, from which many L1s and Layer-2s often derive their respective block-building pipelines. \\
     
     \textit{Transaction Propagation and Mempools} \\
-        When users send transactions, they are typically sent via \textbf{Remote Procedure Call (RPC) endpoints}. These are standardized interfaces that enable transactions to be submitted directly to single trusted nodes, such as wallet providers. These nodes can then forward any transactions over the peer-to-peer (P2P) network, to which validators listen, or keep them in a private \textbf{mempool}. The mempool serves as a temporary storage area for valid but unconfirmed transactions. Each validator maintains a local mempool from which they can source transactions for inclusion in future blocks. \\
+        When users send transactions, they are typically sent via \textbf{Remote Procedure Call (RPC) endpoints}. These are standardized interfaces that enable transactions to be submitted directly to single trusted nodes, such as wallet providers. These nodes can then forward any transactions over the peer-to-peer (P2P) network, to which validators listen, or keep them in a private \textbf{mempool}. The mempool serves as a temporary storage area for valid but unconfirmed transactions. Each validator maintains a local mempool from which they can source transactions for inclusion in blocks. \\
         
         % When users send transactions, they typically propagate unconfirmed through the peer-to-peer (P2P) network. Each validator maintains a local \textbf{mempool}, which serves as a temporary storage area for valid but unconfirmed transactions received from neighbouring peers. The mempool is the source from which proposers select transactions for inclusion in future blocks. Alternative ways to propogate transactions exist. User transactions may be sent directly to proposers, typically done using \textbf{Remote Procedure Call (RPC) endpoints}, standardized interfaces allowing transactions to be submitted directly to nodes. Other possibilities include private mempools, ... \todoqb{is this exhaustive?}\\
         % \qb{"... users mainly send txs through RPCs, standardized interfaces allowing txs to be submitted directly to nodes, to single trusted nodes, such as wallet providers. These nodes can then forward these txs to other nodes over P2P, or keep then in a private mempool"}
 
     \textit{Proposers: Selection and Responsibilities} \\
-        Validator actions on Ethereum are all based on a 12-second window called a \textbf{slot}. Each slot in Ethereum has an assigned proposer, which is a randomly selected validator. Proposers are selected pseudo-randomly from the set of staked validators. When elected, proposers have a monopoly over the construction of their block. This enables proposers to extract value through selective block building beyond the rewards for simply following the Ethereum protocol, known as \textbf{maximal extractable value} (MEV).
+        Validator actions on Ethereum are all based on a 12-second window called a \textbf{slot}. Each slot in Ethereum has an assigned proposer, which is a pseudo-randomly selected validator from the set of staked validators. When elected, proposers have a monopoly over the construction of their block. This enables proposers to extract value through selective block building beyond the rewards for simply following the Ethereum protocol, known as \textbf{maximal extractable value} (MEV).
         The incentives to extract MEV have led to \textbf{proposer-builder-separation (PBS)}, an architectural modification where the roles of block construction and proposal are disaggregated and assigned to different entities. Specialized entities called \textbf{builders} compete to construct the highest-value blocks by extracting as much MEV as possible. 
         Proposers select from among competing builder-produced blocks, simply choosing the block that pays them the most. \textbf{MEV-Boost} \cite{MEV-Boost}, an out-of-protocol implementation of PBS on Ethereum, is the primary source of blocks on Ethereum with over 90\% of blocks being sourced through MEV-Boost at the time of writing \cite{MEV.pics}. \\
 
     \textit{Proposer Lookahead} \\
-        The \textbf{proposer lookahead} specified by the Ethereum protocol provides advance notice for validators of their future proposing duties. Currently, Ethereum provides validators with this knowledge for the current \textbf{epoch} (32 slots is known as an epoch) only. Estimates for the proceeding epoch's lookahead are possible but are not deterministic until the epoch begins. This changeover has led to alternative lookahead designs, including EIP-7917 \cite{EIP7917}. The lookahead plays a crucial role in preconfirmations, where determining the proposer schedule ahead of time can allow proposers to begin providing preconfirmations before their slot begins. This is explained in detail in Section~\ref{sec:step2_lookahead}. \\
+        The \textbf{proposer lookahead} specified by the Ethereum protocol provides advance notice to validators of their proposing duties. Currently, Ethereum provides validators with this knowledge for the current \textbf{epoch} (32 slots is known as an epoch) only. Estimates for the proceeding epoch's lookahead are possible but are not deterministic until the epoch begins. This changeover has led to alternative lookahead designs, including EIP-7917 \cite{EIP7917}. The lookahead plays a crucial role in preconfirmations, where determining the proposer schedule ahead of time can allow proposers to begin providing preconfirmations before their slot begins. This is explained in detail in Section~\ref{sec:step2_lookahead}. \\
     
     \textit{State Progression and Finalization}  \\
-        Each slot, the proposer builds and proposes a block. An attestation committee is constructed from a random subset of validators and assigned to a slot. Attestors attest to the validity of the block, adding it to the chain. Attesting to a block also attests to all blocks on which that block is built. Due to latencies between validators and occasional validator faults, blocks are not considered \textbf{finalized}, or unable to be reverted~\cite{ETH2_book}, until they have received attestations from at least two-thirds of the validator set. As all of the validator set is assigned to a committee at least once per epoch, one epoch stands as the approximate finalization time for a block on Ethereum. Protocols providing transaction preconfirmations may consider a preconfirmed transaction delivered if it is included in a block. Other protocols may more strictly require that the transaction be included in a finalized block. This is further explained in Section~\ref{preconf_delivery}.
+        Each slot, the proposer builds and proposes a block. An \textbf{attestation committee} is constructed from a random subset of validators and assigned to a slot. \textbf{Attestors} attest to the validity of the block, adding it to the blockchain. Attesting to a block also attests to all blocks on which that block is built. Due to latencies between validators and occasional validator faults, blocks are not considered \textbf{finalized}, or unable to be reverted~\cite{ETH2_book}, until they have received attestations from at least two-thirds of the validator set. As all of the validator set is assigned to a committee at least once per epoch, one epoch stands as the approximate finalization time for a block on Ethereum. Preconfirmation protocols may consider a preconfirmed transaction delivered if it is included in a block. Other protocols may more strictly require that the transaction be included in a finalized block. This is further explained in Section~\ref{preconf_delivery}.
         
-        Non-finalized blocks may be replaced in a \textbf{reorganization (reorg)}, causing transactions that appear to be settled to be removed from the canonical chain. Reorgs are most likely to occur for recent blocks. The profit-incentive of MEV may incentivize reorgs if the MEV opportunity is large enough \cite{3_PoS_Attacks}. In the context of preconfirmations, reorgs have implications for whether a preconfirmed transaction can be considered as delivered. 
+        % Non-finalized blocks may be replaced in a \textbf{reorganization (reorg)}, causing transactions that appear to be settled to be removed from the canonical chain. Reorgs are most likely to occur for recent blocks. The profit-incentive of MEV may incentivize reorgs if the MEV opportunity is large enough \cite{3_PoS_Attacks}. In the context of preconfirmations, reorgs have implications for whether a preconfirmed transaction can be considered as delivered. 
         
         % In each slot, an attestation committee is constructed from a random subset of validators. Each slot, the proposer builds and proposes a block. If the block is valid, according to Ethereum's validity rules, attestors are expected to attest to it, which adds the block to the chain, and serves as votes from attesters for their view of the current state. Attesting to a block also attests to all blocks on which that block is built. However, because of latencies between validators and occasional validator faults, blocks are not considered finalized until they have received attestations from at least two-thirds of the validator set. As all of the validator set is elected to an attestation committee at least once per epoch, one epoch stands as the approximate finalization time for a block on Ethereum.
         %Blocks that are confirmed but not finalized may be replaced in a reorganization (reorg), causing transactions that appear to be settled to be removed from the canonical chain. Reorgs are most likely to occur for recent blocks. The complexity and competitiveness of MEV extraction has led to a requirement for block producers to specialize and engage in economies of scale to gain trust and secure orderflow. As such, MEV poses risks to the decentralization of the validator set and consensus stability; non-finalized blocks may be reorged if the MEV opportunity is large enough. Finality is thus important for providing transactions with strong economic guarantees that they will not be reversed.
@@ -197,45 +199,94 @@ Any truly decentralized L1 needs to be throughput bottlenecked to allow a decent
 
 Deploying an execution environment as an L2 instead of a standalone blockchain removes the need for the L2 to establish its own consensus protocol or dedicated economic security for securing state transitions (although these features can be added). L2s can tap into the user base of the L1, allowing L1 users to opt-in to locking their funds and using them within the L2. Many L2 solutions exist, including rollups, validiums, and Plasmas \cite{L2_versus_execution_sharding}.
 
-As in standalone blockchains, L2 state progresses through proposers proposing blocks, establishing a canonical list of blocks, and some eventual finalization of L2 state implied by these blocks on the L1. Note, the exact process of finalizing L2 state is beyond the scope of this SOK \todoqb{Consistent in how we refer to this document/article/paper}. With respect to preconfirmations, there are two key L2-specific concepts that are needed:
+As in standalone blockchains, L2 state progresses through proposers proposing blocks, establishing a canonical list of blocks, and some eventual finalization of L2 state implied by these blocks on the L1. Note, the exact process of finalizing L2 state is beyond the scope of this document. With respect to preconfirmations, two key L2-specific concepts are relevant:
 \begin{enumerate}
     \item \textbf{L2 proposer selection:} A key factor impacting preconfs is whether an L2 is based or non-based. \begin{enumerate}
         \item \textbf{Based L2:} Delegates block proposing to the proposers of L1.
         \item \textbf{Non-based L2:} Uses a custom proposer election mechanism.
     \end{enumerate}
-    \item \textbf{L2 governance:} L2s are semi-independent ecoystems that can utilize standalone governance for L2-specific upgrades and maintenance. L2 governance describes a set of L2 stakeholders who have special permissions to modify some or all of an L2's protocol specification. To the best of our knowledge, all L2's in production have some form of dedicated governance set, although exceptions without governance are possible \cm{native rollups reference}. In contrast, Ethereum does not have dedicated governance, and instead relies on any upgrades being accepted by the majority of stakeholders. Notable examples of where minorities of Ethereum stakeholders disagreed with upgrades include the DAO Hack hard-fork \cite{wiki_the_DAO} \qb{generally not a fan of wikipedia as reference but i'm not aware of an unbiased source for this; lmk if you know a better reference}, and the proof-of-stake upgrade. \todocm{hard fork links - https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/paris.md  ?}
+    \item \textbf{L2 governance:} L2s are semi-independent ecosystems that can utilize standalone governance for L2-specific upgrades and maintenance. L2 governance describes a set of L2 stakeholders who have special permissions to modify some or all of an L2's protocol specification. To the best of our knowledge, all L2s in production have some form of dedicated governance set, although exceptions without governance are possible \cm{native rollups reference}. In contrast, Ethereum does not have dedicated governance, and instead relies on any upgrades being accepted by the majority of stakeholders. Notable examples of where minorities of Ethereum stakeholders disagreed with upgrades include the DAO Hack hard-fork \cite{wiki_the_DAO} \qb{generally not a fan of wikipedia as reference but i'm not aware of an unbiased source for this; lmk if you know a better reference}, and the proof-of-stake upgrade. \todocm{hard fork links - https://github.com/ethereum/execution-specs/blob/master/network-upgrades/mainnet-upgrades/paris.md  ?}
 \end{enumerate} 
 
 
-\section{Preliminaries: Preconfirmations}
-    Longer block times create friction for users and applications requiring faster feedback on transactions. Preconfirmations were proposed as a way to bridge the delay between transaction submission and confirmation\todoqb{reference}. They provide users with early cryptoeconomic guarantees that their transactions will be included or executed. Preconfirmations therefore reduce the perceived latency of transactions. 
-        \begin{definition}
-        A \textbf{preconfirmation} (\textbf{preconf}) is a cryptographically signed commitment to the future inclusion or execution of a transaction or transaction sequence.
-        \end{definition}
-    Within the Ethereum ecosystem, preconfs can be implemented in different ways depending on the layer and sequencing model involved. A \textbf{based preconf} is a preconf either for L1 or a based L2. A \textbf{non-based preconf} is a preconf for a non-based L2. For non-based L2s, L2 proposers providing the non-based preconfs do not need to be L1 validators. Single-proposer L2s have, as a natural extension of the proposer's sequencing monopoly, long provided preconfs. This single-proposer architecture enables faster transaction processing and more sophisticated preconfs, but at the expense of reduced decentralization compared to based L2s.
+\section{Preliminaries}
+    \todoqb{how to distinguish between request and response?  preconf request returns a preconf=response, based on request}
 
-    Without loss of generality, we discuss preconfs for both L1 and L2 as their enabling mechanisms share similarities across both layers. The distinction lies primarily in who is providing the preconfs, and the types of commitments they can provide based off of their rights in the network. 
-    
+    Longer block times create friction for users and applications requiring faster feedback on transactions. Preconfirmations were proposed as a way to bridge the delay between transaction submission and confirmation~\cite{W:Basedpreconfirmations}. 
+        \begin{definition}
+        A \textbf{preconfirmation} (\textbf{preconf}) is a commitment to a (partial) sequence of transactions existing on the blockchain.
+        \end{definition}
+    \todocm{preconf needs to talk about "pre", it's doing something earlier than something.}
+
+    Within the Ethereum ecosystem, preconfs can be implemented in different ways depending on the layer and sequencing model involved. 
+    Without loss of generality, we discuss preconfs for both L1 and L2 as their enabling mechanisms share similarities across both layers. The distinction lies primarily in who is providing the preconfs, and the types of commitments they can provide based off of their rights in the network.
+
+   %  A \textbf{based preconf} is a preconf either for L1 or a based L2. A \textbf{non-based preconf} is a preconf for a non-based L2. For non-based L2s, L2 proposers providing the non-based preconfs do not need to be L1 validators. \cm{This is a lot of random points. What's the purpose? why then a leap to Single-proposer L2s ? Shifting it to the end as I think it can be deleted.}
+
+    \subsection{Preconfirmers}
+        Preconfs are provided by preconfirmers (preconfers). The entity that can perform the preconfer role depends on the layer and sequencing model considered. 
+        \begin{definition}
+        A \textbf{preconfirmer (preconfer)} is an entity that provides preconfs. Furthermore,
+            \begin{definition}
+                \textbf{Preconfing} is the provision of a preconf by a preconfer
+            \end{definition}
+        \end{definition}
+
+        Preconfers have varying abilities to credibly deliver on their commitments. Proposers—whether for L1 or L2—are ideal candidates for preconfers. 
+        On the L1, validators who are scheduled to propose in upcoming slots can provide preconfs for L1 transactions, or for based L2 transactions if they have opted in to do so. This is explained in detail in Section~\ref{step1:preconfer_registration}. Single-proposer L2s have long provided preconfs. As the proposer has a monopoly on sequencing and block production, it alone can provide a credible preconf. 
+        In non-based L2s with decentralized sequencing, the proposer scheduled for an upcoming slot can, like at L1, provide preconfs, however independently of any L1 validator duties. 
+        To absolve themselves of the complexity of preconfing, validators can delegate their preconf duties to gateways.
+        \begin{definition}
+        A \textbf{gateway} is a specialized entity that routes preconf requests and preconfs between users and proposers, respectively.
+        % provides preconfs on behalf of proposers
+        \end{definition}
+        As their main role involves coordinating proposers, gateways can offer preconfs with longer time horizons compared to individual L1 proposers. However, since they lack direct control over block production, the credibility of preconfs sourced from gateways is derived from their ability to enforce delivery by the proposers~\cite{W:ThePreconfirmationGatewayUnlockingPreconfirmations:FromUsertoPreconfer, W:Ahead-of-TimeBlockAuctionsToEnableExecutionPreconfirmations,W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization}. \qb{is there a better way to formulate these two sentences / more relevant points to mention here?}
+        \qb{relays are distinct from gateways, but why?}
+        A final preconfer candidate is builders under the PBS paradigm. As builders bid for the right to construct the proposer's execution payload as part of their block, they can only offer preconfs conditional on them winning the MEV-Boost auction~\cite{W:PreconfirmationFairExchange,W:LeaderlessandLeader-BasedPreconfirmations}. At the time of writing, three builders typically win more than 90\% MEV-Boost auctions \cite{MEV.pics}. Therefore, acquiring preconfs from these builders may be a sufficient commitment for some users and applications. 
+
+        % it is at a preconfer's discretion to choose what type of preconfs to offer. 
+
     \subsection{Types of preconfs based on execution guarantee}
-        Different types of preconfs can be provided with different scopes of commitments. The type of preconf determines the types of applications that can utilize preconfs. The simplest form of preconfs are inclusion preconfs. Inclusion preconfs give users assurance that their transaction will be executed. 
+        Depending on the preconfer, different types of preconfs can be provided with different scopes of commitments. The type of preconf determines which applications and users benefit from them.
+        % determines the types of applications that can utilize preconfs. 
+        The simplest form of preconfs are \textbf{inclusion preconfs}. 
         \begin{definition}
-        An \textbf{inclusion preconf} is a commitment that the transaction will be included in a given future block.
-        \end{definition}
-
-        Generally, inclusion preconfs are useful when the primary concern of the user or application is ensuring that the transaction is executed. For example, simple transfers or posting of batches to L1~\cite{W:PreconfirmationsforVanillaBasedRollups,W:APricingModelforInclusionPreconfirmations}.  
-        However, inclusion preconfs are limited by the uncertainty they provide on the outcome of transactions. For example, a user might receive a preconf for their transaction interacting with a decentralized exchange, but the transaction fails due to slippage, despite the transaction being included in a block. 
-
-        In contrast, execution preconfs are more comprehensive commitments that address the limitations of inclusion preconfs.
-        Execution preconfs are useful for any transaction looking to act on \textbf{contentious state}. Examples include capturing arbitrage opportunities or liquidation events.
+        An \textbf{inclusion preconf} is a commitment that a transaction sequence will exist on the blockchain. 
+        \end{definition}        
+        Generally, inclusion preconfs are useful when the primary concern of the user or application is ensuring that the transaction is included. For example, simple transfers or posting of batches to L1~\cite{W:PreconfirmationsforVanillaBasedRollups,W:APricingModelforInclusionPreconfirmations}.  
+        % However, inclusion preconfs are limited by the uncertainty they provide on the outcome of transactions. For example, a user might receive an inclusion preconf for their transaction interacting with a decentralized exchange, but the transaction fails due to slippage, despite the transaction being included in a block.
+        However, an inclusion preconf provides no meaningful guarantees for transactions seeking to act on \textbf{contentious state}. 
         \begin{definition}
         \textbf{Contentious state} is a state element upon which concurrent transactions attempt to act, creating a race condition.
         \end{definition}
-        In such contexts, inclusion preconfs provide no meaningful guarantees.
+        Examples of contentious state include capturing arbitrage opportunities or liquidation events.
+        Execution preconfs are more comprehensive commitments than inclusion preconfs.
         \begin{definition}
-        An \textbf{Execution preconf} is a commitment to both the transaction being included in a given future block, and to the outcome of that transaction being executed.
+        An \textbf{execution preconf} is a commitment to the result of executing a transaction sequence.
+        % An \textbf{Execution preconf} is a commitment to the exact sequence of transactions executed up to and including the transaction.  
         \end{definition}
         Providing execution preconfs is more complex and comes with additional constraints compared to providing inclusion preconfs.
-        At the time of writing, most execution preconf protocols being considered focus on sequencing commitments. These are stricter execution preconfs that assure a given post-execution state. Such commitments can only be given during the current slot, as they require knowledge of the pre-execution state. However, less strict execution preconfs, outcome commitments without a sequence, are also possible. Although, not knowing the pre-execution state introduces risk for the entity providing such execution preconfs.
+        At the time of writing, most execution preconf protocols being considered focus on sequencing commitments. 
+        \begin{definition}
+            A \textbf{sequencing commitment} is an execution preconf for the state.
+        \end{definition}
+        Such preconfs can only be given during the current slot, as they require knowledge of the pre-execution state. However, less strict execution preconfs are also possible. These are called outcome commitments.
+        \begin{definition}
+            An \textbf{outcome commitment} is an execution preconf for a discrete predicate on the result.
+        \end{definition}
+        Outcome commitments are more general execution preconfs than sequencing commitments, and include commitments to:
+            \begin{itemize}
+                \item A state element: \textit{a token balance after a transaction sequence execution }
+                \item A behavior: \textit{a} \texttt{Transfer} \textit{event will be emitted} 
+                \item Execution status: \textit{a transaction sequence will not revert}
+                \item Relational conditions: \textit{the balance of one token will remain greater than another}
+                \item Negative conditions: \texttt{receipt.logs} \textit{does NOT contain an} {OwnershipTransferred} \textit{event}
+            \end{itemize}
+        However, in the case of an outcome commitment to a specific state element, not knowing the pre-execution state introduces risk for preconfer.
+
+         
+
+        
 
     %Builders know pre-state, but don't have a guaranteed chance of acting on the pre-state 
     %Determinism = commitment to post-state, but it need not be so strict: it's a commitment to an outcome, and you don't need to know pre-state to guarantee you personally will ensure that outcome (even at your own expense, this is what solvers do) 
@@ -243,29 +294,13 @@ As in standalone blockchains, L2 state progresses through proposers proposing bl
         % \cm{ I removed a paragraph here as it was not generally true. Execution preconfs can be as simple as committing to the sequence, the proposer does not need to simulate the transaction against the entire state, instead only needing to do basic checks such as "isFeeValid".}
         %To provide credible execution preconfs, the transaction for which a user requests the preconf must first be simulated against the current state before any commitment can be made to the transaction producing the expected result. This simulation requirement introduces significant computational overhead. This creates natural barriers to entry, limiting the set of entities that can credibly provide execution preconfs. \qb{ is this last sentence general enough to explain the concept without having to introduce preconfers?}
         
-    \subsection{Preconfirmers (preconfers)} \todocm{please refine definitions}
-        Preconfs are provided by \textbf{preconfers}. The entity that can perform the preconfer role depends on the layer and sequencing model considered. 
-        \begin{definition}
-        A \textbf{preconfer} is an entity that provides a (inclusion or execution) preconf. 
-        \end{definition}
-
-        Different preconfers have varying abilities to credibly deliver on their commitments. Proposers—whether for L1 or L2—are ideal candidates for preconfers. 
-        On the L1, validators who are scheduled to propose in upcoming slots can provide preconfs for L1 transactions, or for based L2 transactions if they have opted in to do so. This is explained in detail in Section~\ref{step1:preconfer_registration}. In single-proposer L2s, the proposer is uniquely positioned to provide preconfs as they have a constant monopoly over block construction. In non-based L2s with decentralized sequencing, the proposer(s) scheduled for upcoming slots can, like at L1, provide preconfs, however independently of any L1 validator duties. 
-
-        For both L1 and based L2s, any entity with a partial or full monopoly over block construction can provide preconfs. \qb{this sentence is still untrue} The L1 proposer can provide preconfs directly, as described above, or indirectly if collaborating with a \textbf{gateway}. 
-        \begin{definition}
-        A \textbf{gateway} is an intermediary entity that provides preconfs on behalf of proposers. 
-        \end{definition}
-        Gateways can specialize, have better availability, and can offer preconfs with longer time horizons compared to individual L1 proposers. However, since they do not have direct control over block production, gateways must rely on their relationships to proposers. \qb{this needs to be elaborated upon}~\cite{W:ThePreconfirmationGatewayUnlockingPreconfirmations:FromUsertoPreconfer, W:Ahead-of-TimeBlockAuctionsToEnableExecutionPreconfirmations,W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization}.
-
-        A final preconfer candidate is builders under the PBS paradigm, explained in Section~\ref{sec:L1_pipeline}. As builders are bidding for the right to construct the proposer's execution payload as part of their block, builders can only offer preconfs conditional on them winning the MEV-Boost auction. This means that builders, in contrast to proposers and gateways, can only offer preconfs with a less-than-certain \qb{rephrase since even proposers don't give certainty: they can always not propose} probability of inclusion in a block ~\cite{W:PreconfirmationFairExchange,W:LeaderlessandLeader-BasedPreconfirmations}. At the time of writing, three builders typically win more than 90\% MEV-Boost auctions \cite{MEV.pics}. Therefore, acquiring preconfs from these builders may be a sufficient commitment for some users and applications. 
-
-        % it is at a preconfer's discretion to choose what type of preconfs to offer. 
+    
 
 
 
 \section{The 6 steps of Preconfirmations}
-\dk{Probably needs an intro}
+This section analyses the general flow of a preconf protocol and the roles of its key participants. The flow begins when a candidate expresses interest in joining the protocol as a preconfer. Upon meeting the protocol’s registration requirements, the candidate becomes eligible for election as a preconfer. The protocol then enters a repeated interaction phase involving users who submit preconf requests and preconfers who respond to them with preconf responses. The final step of the preconf protocol flow focuses on the fulfilment of preconf promises and the on-chain publication of any preconfed tx(s). An additional optional step in the flow that covers preconfer punishment or preconfers who behave maliciously. Fig.~\ref{preconf_protocol_flow} illustrates a general overview of the preconf protocol flow.
+
 
     \begin{figure*}[htbp]
         \centering
@@ -433,14 +468,20 @@ The preconf protocol can also employ access lists. For example, a whitelist limi
     
 \subsection{Step 5: Delivery/Publication of Preconf} \label{preconf_delivery}
 
+\dk{need to link proposer and preconfer to comply with the diagram}
 
+\begin{itemize}
+    \item gateway delivery vs proposer delivery
+    \item based vs non-based preconf
+\end{itemize}
     
 \subsection{Step 6: Preconfer Punishment} \label{preconfer_punishment}    
-    Once a preconf is delivered and published, it needs to be verified that the preconfed tx(s)/intent/operation \dk{maybe we need a name for "tx(s)/intent/operation" to avoid writting the whole thing over and over again} was included or executed as specified by the preconf request. Preconfers that behave maliciously may be liable to punishment.
+    Once a preconf is delivered and published, it needs to be verified that the preconfed tx(s)/intent/operation \dk{maybe we need a name for "tx(s)/intent/operation" to avoid writting the whole thing over and over again} \cm{maybe request is appropriate? We can make this connection in the request section if so.} was included or executed as specified by the preconf request and response. Punishments can be utilized to ensure preconfers deliver preconfs according to any restrictions set out in the request or response.
     
-    \subsubsection{Preconfer faults and punishing conditions} 
+    \subsubsection{Preconfer faults and punishing conditions} \label{preconfer_faults_and_punishing_conditions}
+    There are various faults that a malicious or negligent preconfer can commit and can jeopardise the smooth operation of a preconf protocol. Fig.~\ref{preconfer fault tree} presents a decision tree that categorises preconf faults.
     \begin{definition}
-        The \textbf{punishing conditions} is a list of faults (see Fig.~\ref{preconfer fault tree}) that preconfers should avoid committing otherwise they can be susceptible to punishment. They are put in place to act as a disincentive to malicious preconfer behaviour.
+        The \textbf{punishing conditions} is a list of faults that preconfers should avoid committing otherwise they can be susceptible to punishment. They are put in place to act as a disincentive to malicious preconfer behaviour.
     \end{definition}
 
 \vspace{5mm}
@@ -459,7 +500,7 @@ The preconf protocol can also employ access lists. For example, a whitelist limi
             A \textbf{liveness fault} occurs when the preconfer misses the slot,  does not publish a block, and therefore the preconf tx(s)/intent/operation is not included on-chain. 
         \end{definition}
         
-        A liveness fault could potentially be accidental and non-malicious, for example, due to a power outage or internet downtime. Therefore, the punishment for the preconfer should probably be less harsh. However, liveness faults can be indistinguishable from safety faults and may need to be punished severely~\cite{W:Basedpreconfirmations}. To prevent accidental liveness slashing, \cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs} suggests a chained preconf system where following preconfers in the lookahead can honour a preconf that was not fulfilled by the active preconfer due to liveness failure.
+        A liveness fault could potentially be accidental and non-malicious, for example, due to a power outage or internet downtime. Therefore, protocols may want a lighter punishment for liveness faults. That being said, liveness faults can be indistinguishable from safety faults and may need to be punished severely~\cite{W:Basedpreconfirmations} \cm{this is a bold statement, so we need an example if this is true.}. To mitigate the punishments needed in the case of an accidental liveness fault, \cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs} suggests a chained preconf system where following preconfers in the lookahead can honour a preconf that was not fulfilled by the active preconfer due to liveness failure. \cm{Introducing a protocol like this requires 1 or 2 more sentences so the SOK is self-contained. Why would the following preconfer chain preconfs? Any limitations to this chaining protocol?}
         
 
     \paragraph{Condition Fault \dk{or Broken request conditions or parametric fault or Specification Fault or Constraint Fault}}
@@ -473,8 +514,17 @@ The preconf protocol can also employ access lists. For example, a whitelist limi
         \begin{definition}
             An \textbf{idleness fault} occurs when a preconfer receives valid preconf requests but neglects their duty and fails to provide preconf services.
         \end{definition}
-
-        There is a thin line between rejecting or ignoring a valid yet non-profitable preconf request and committing an idleness fault. As illustrated in sections \ref{preconf_response} and \ref{EconomicViabilityOfPreconfs} \dk{this should be adjusted to point to preconf pricing}, there are various factors that can influence a preconfer's decision to provide a preconf, such as the preconf tip and the incompatibility of conflicting txs. Therefore, idleness faults can be handled by a subjective observer, such as an overseer.
+       Idleness faults have not been well-documented, but it is natural for some preconf protocols to insist that preconfers provide preconfs under certain conditions, such as:
+        \begin{itemize}
+            \item Preconfing all requests
+            \item Preconfing all requests that do not conflict with an already preconfed and/or confirmed transaction.
+            \item Preconfing all requests paying tips greater than a certain amount
+            \item Preconfing all requests if and only if there exists a batch of requests paying tips greater than some minimum total amount. 
+            
+        \end{itemize}
+        As idleness faults depend on requests being delivered to the preconfer but not being responded to, this introduces a subjective observability requirement for the overseer.
+        
+        As illustrated in sections \ref{preconf_response} and \ref{EconomicViabilityOfPreconfs} \dk{this should be adjusted to point to preconf pricing}, there are various factors that can influence a preconfer's decision to provide a preconf, such as the preconf tip and the incompatibility of conflicting txs. Therefore, idleness faults can be handled by an overseer \cm{if not handled by an overseer, who else can handle this? Personally, I think we can say something stronger "likely need to be handled"}.
 
     \begin{figure}[htbp]
         \centering
@@ -485,6 +535,7 @@ The preconf protocol can also employ access lists. For example, a whitelist limi
     
 
 \subsubsection{Enforcement Mechanisms (EM) and proofs of malicious baheviour} 
+    Preconf protocols rely on economic incentives to encourage honest preconfer behaviour. However, relying solely on incentives may not be sufficient. Therefore, protocols incorporate mechanisms to punish malicious preconfer behaviour.
 
     \begin{definition}
         An \textbf{enforcement mechanism} (EM) is a mechanism 
@@ -593,46 +644,65 @@ Preconfs require proposers to commit to blockspace earlier than proposal time. T
 
     As for question \textbf{\ref{Q_quantify_benefits}}, accurately quantifying the benefits and the value of UX improvement remains a challenge. Undoubtedly, enhancing UX improves the protocol and increases user utility and demand. At the same time, preconfs decrease MEV. Computing MEV loss is relatively simple, but calculating the value of increasing utility and demand and estimating a fair price that users would agree to pay for preconfs is still puzzling, especially without relevant data. It is possible that preconf protocols would need to go through a pilot phase of experimentation and data gathering which before they can properly answer this question.
 
-    \subsection{Risks \& Considerations} % \section{Additional implications/changes/effects}
-    \subsubsection{ecosystem/everybody/systemic}
+    \section{Risks \& Considerations} % \section{Additional implications/changes/effects}
+    In this section, we focus on risks and considerations that can influence design and implementation choices of a preconf protocol. They are split into different categories according to the entity that could be the most affected by them. It is essential to note that this is not an exhaustive list as novel risks and considerations may emerge, for example, with the introduction of new EIPs for Ethereum~\cite{W:Future-ProofingPreconfirmations}. Furthermore, the economic viability of preconf protocols is a major consideration, but it will not be analysed further since it was already covered in depth in Section \dk{add reference to the Economics section}.
+
+    \subsection{for the ecosystem \dk{or everybody/systemic}}
 
     \begin{itemize}
-        \item \textbf{Centralisation problem:} Inevitably, any implementation of preconfs will require a certain level of additional sophistication. As a result, preconfers might choose to outsource technical expertise by delegating preconf duties to gateways. The more complicated it becomes, the less participants will be able to follow and less entities will be entrusted with preconfer duties. This could pose a major centralisation risk for the whole ecosystem~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization,W:BecomingBased:APathtowardsDecentralisedSequencing}.
+        \item \textbf{Smart contract risk:} Similarly to every Web3 protocol that is controlled by smart contracts, preconfs can be prone to smart contract risk, i.e. code errors and vulnerabilities~\cite{W:SmartContractVulnerabilitiesandMitigationStrategies}. The risk could be amplified because the concept of preconfs is recent, complicated and has not been thoroughly battle-tested yet. To mitigate risk, smart contracts must be extensively audited to ensure that they are trustworthy before they are deployed~\cite{W:CrediblyNeutralPreconfirmationCollateral:ThePreconfirmationRegistry}. Another potential idea would be the creation of a competitive environment between different preconf protocols and between preconfer as proposed in \cite{W:ThePreconfirmationSauna}. Such an environment encourages a repeated game from which existing protocols will be improved and new protocols will emerge.
         
-        \item \textbf{Smart contract risk:} Similarly to every Web3 protocol that is controlled by smart contracts, preconfs are exposed to smart contract risk. The risk is amplified because the concept of preconfs is recent, complicated and has not been thoroughly battle-tested yet. To mitigate risk, smart contracts must be extensively audited to ensure that they are trustworthy before they are deployed~\cite{W:CrediblyNeutralPreconfirmationCollateral:ThePreconfirmationRegistry}. Another potential idea would be the creation of a competitive environment between different preconf protocols and between preconfer as proposed in \cite{W:ThePreconfirmationSauna}. Such an environment encourages a repeated game from which existing protocols will be improved and new protocols will emerge.
+        \item \textbf{Centralisation problem:} Inevitably, any implementation of preconfs will require a certain level of additional sophistication. As a result, preconfers may choose to outsource technical expertise by delegating preconf duties to gateways. The more complicated the protocol becomes, the less participants will be able to follow and less entities will be entrusted with preconfer duties. This could pose a major centralisation risk for the whole ecosystem~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization,W:BecomingBased:APathtowardsDecentralisedSequencing}.\dk{should we also talk about overseers here?}
     
-        \item \textbf{Liveness:} % single point of failure and censorship resistance: depending on the preconf implementation. This is an issue with "streaming" continuous preconfs. slot preconfer has full control (Strawmanning Based Preconfirmations, Based Preconfirmations with Multi-round MEV-Boost)
+        \item \textbf{Liveness:}
+        Implementations that grant exclusive preconfer rights to a single entity in each slot might be exposed to liveness risk. Granting complete control creates a single point of failure and raises censorship concerns for the duration of the slot~\cite{W:StrawmanningBasedPreconfirmations,W:BasedPreconfirmationswithMulti-roundMEV-Boost}. 
+        % This is an issue with "streaming" continuous preconfs. 
         
-        \item \textbf{Latency races:} % depending on the preconf implementation. This is an issue with "streaming" continuous preconfs. lowest latency to preconfer gives user a priority to preconfs for MEV profit txs (Strawmanning Based Preconfirmations, Based Preconfirmations with Multi-round MEV-Boost)
-        
-        \item \textbf{Congestion:} % depending on the preconf implementation. This is an issue with "streaming" continuous preconfs. spamming with arbitrage attempts (Strawmanning Based Preconfirmations, Based Preconfirmations with Multi-round MEV-Boost)
+        \item \textbf{Latency races:} 
+        Users could potentially benefit from having the lowest latency to the preconfers in protocols that offer continuous preconfs\dk{the term continuous preconfs should be explained, maybe in the economics section}. Minimum latency can maximise MEV back-running profit as users with the lowest latency can have priority to accessing the latest chain state and submitting back-run txs. Besides creating inequalities among users, latency races can also lead to geographical centralisation~\cite{W:StrawmanningBasedPreconfirmations}. 
+        Single-proposer protocols are more exposed to this risk as the location of the preconfer remains constant. A potential solution could be batching preconfs in subslots instead of proving them continuously~\cite{W:BasedPreconfirmationswithMulti-roundMEV-Boost}.
+                
+        \item \textbf{Congestion:} 
+        Protocols that support continuous preconfs may also be vulnerable to congestion risk. Especially in L2s where gas fees are lower, users can spam the network with probabilistic arbitrage attempts. Congestion increases gas prices as a result of increased demand for block space. At the same time, block space is wasted in failed arbitrage txs. The congestion risk could be mitigated with an auction-based system that encourages users to participate in a bidding contest instead of flooding the network~\cite{W:StrawmanningBasedPreconfirmations,W:BasedPreconfirmationswithMulti-roundMEV-Boost}.
     
     \end{itemize}
 
-    \subsubsection{for preconfers}
+    \subsection{for preconfers}
     \begin{itemize}
-        \item \textbf{Slashing:} % take on risk, including accidental liveness slashing (Avoiding Accidental Liveness Faults for Based Preconfs)
+        \item \textbf{Slashing:}
+        Preconfers are required to opt-in to punishing conditions, including slashing conditions, and lock up a slashable collateral. Slashing is probably the main risk that preconfers take on. Slashing conditions act as a safeguard designed to deter malicious behaviour. However, as explained in section \ref{preconfer_faults_and_punishing_conditions}, even honest preconfers may be vulnerable to accidental liveness slashing~\cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}.
+
         
-        \item \textbf{Additional complexity / sophistication requirement:} % this is linked to slashing, centralisation (Towards an implementation of based preconfirmations leveraging restaking, Analysing Expected Proposer Revenue from Preconfirmations)
+        \item \textbf{Sophistication requirements:} 
+        Preconf protocols are bound to have some sophistication requirements from the preconfers. The complexity requirements, paired with any implicitly necessary capital requirements, should be a serious consideration for potential preconfers. Meanwhile, builders already have the infrastructure and experience to take on additional expertise. Consequently, proposers may be tempted to delegate their preconf duties to builders which, if left uncontrolled, can lead to the aforementioned centralisation problem~\cite{W:Towardsanimplementationofbasedpreconfirmationsleveragingrestaking,W:AnalysingExpectedProposerRevenuefromPreconfirmations}.
         
-        \item \textbf{Delegation:} %Slashing can be triggered by delegate action, may involve /enable incorrect attribution of faults  (Delegation in Bolt: Outsourcing Sophistication While Preserving Decentralization)
+        \item \textbf{Fault attribution:}
+        When all preconfer duties are performed by a single entity in each slot, fault attribution is relatively straightforward in case of punishing condition violation. Nonetheless, attribution becomes significantly more convoluted when duties are delegated or distributed~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization}. Protocols that support the separation of the preconf pipeline among multiple independent entities should carefully design mechanisms to ensure that fault attribution remains as transparent and objective as possible.
         
-        \item \textbf{Legal risk:} % is it a binding contract, mitigation: discalaimer that they are not legally commited
+        \item \textbf{Legal risk:} 
+        The legal risk associated with preconfs is not widely discussed. However, the structure of a preconf shares common characteristics with a formal agreement, raising the question of whether a preconf could constitute a legally binding contract. If so, violating the protocol's punishing conditions could potentially carry legal consequences for the preconfer. To mitigate this risk, protocols may need to consider including explicit disclaimers to limit the legal liability of preconfers.
+
     \end{itemize}
     
-    \subsubsection{for users}
+    \subsection{for users}
 
     \begin{itemize}
-        \item \textbf{Increased prices:} % Making preconfs attractive to proposers probably requires increasing gas fees. Also increased demand from improved UX can increase gas prices 
+        \item \textbf{Increased gas prices:} 
+        % potential implication / collateral effect
+        % may affect all users and not just the ones requesting preconfs
+        % Making preconfs attractive to proposers probably requires increasing gas fees. 
+        % Also increased demand from improved UX can drive gas prices up
         
         \item \textbf{Sophisticated user requirement:} % requesting a preconf entails some additional sophistication, most sophistication could be hidden behind the wallet (Analysing Expected Proposer Revenue from Preconfirmations)
         
         \item \textbf{Frontrun hazard for non-preconfirmed txs:} %preconfs may bring a requirement for everyone to use preconfs, which may be worse UX for some users. Can we have preconfs which are "at least as easy to use as current transactions?"  if everyone is doing preconfs and you don't, you might be in a bad position (Analyzing BFT & Proposer-Promised Preconfirmations)
         
-        \item \textbf{Deposit requirement:} %requirement to maintain funds in multiple platforrms, depends on the design (not standard) some protocols require users to post a collateral (Proposer-Commitment Infrastructure in Ethereum)
+        \item \textbf{Deposit requirement:} 
+        % certain protocol desings
+        %requirement to maintain funds in multiple platforrms, depends on the design (not standard) some protocols require users to post a collateral (Proposer-Commitment Infrastructure in Ethereum)
     \end{itemize}
     
-    \subsubsection{for Rollups}
+    \subsection{for L1 scaling solutions (LNs)}
     \begin{itemize}
         \item \textbf{Increased delay on transaction execution:} % not every L1 proposer has opted-in to give preconfs (Analyzing BFT & Proposer-Promised Preconfirmations)
         
