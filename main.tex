@@ -13,6 +13,7 @@
 %temp package
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage[margin=1in]{geometry}
+\usepackage[most]{tcolorbox}
 
 \newtheoremstyle{boldstyle}% name
   {\topsep}% space above
@@ -62,6 +63,46 @@
   {\begin{defopenboxq}\begin{definitionx}}
   {\end{definitionx}\end{defopenboxq}}
 
+% Caveat box formatting 
+\newlength{\entrysep}
+\setlength{\entrysep}{8pt}
+%\par\vspace{\entrysep}
+
+\newtcolorbox{riskbox}[1]{
+                colback=black!6,
+                colframe=black!35,
+                colbacktitle=red!20,
+                coltitle=black,
+                fonttitle=\bfseries,
+                title=#1,
+                sharp corners,
+                boxrule=0.2mm,
+                boxsep=5pt,
+                top=2pt,
+                bottom=2pt,
+                left=2pt,
+                right=2pt
+            }
+
+\newtcolorbox{considerationbox}[1]{
+                colback=black!6,
+                colframe=black!35,
+                colbacktitle=blue!20,
+                coltitle=black,
+                fonttitle=\bfseries,
+                title=#1,
+                sharp corners,
+                boxrule=0.2mm,
+                boxsep=5pt,
+                top=2pt,
+                bottom=2pt,
+                left=2pt,
+                right=2pt
+            }
+\newcommand{\risk}[1]{\par\noindent\textbf{\textcolor{black}{Risk:}} #1\par\vspace{\entrysep}}
+\newcommand{\consideration}[1]{\par\noindent\textbf{\textcolor{black}{Consideration:}} #1\par\vspace{\entrysep}}
+\newcommand{\mitigation}[1]{\par\noindent\textbf{\textcolor{black}{Mitigation:}} #1}
+% END Caveat box formatting      
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -580,72 +621,117 @@ Preconfs require proposers to commit to blockspace earlier than proposal time. T
 
     As for question \textbf{\ref{Q_quantify_benefits}}, accurately quantifying the benefits and the value of UX improvement remains a challenge. Undoubtedly, enhancing UX improves the protocol and increases user utility and demand. At the same time, preconfs decrease MEV. Computing MEV loss is relatively simple, but calculating the value of increasing utility and demand and estimating a fair price that users would agree to pay for preconfs is still puzzling, especially without relevant data. It is possible that preconf protocols would need to go through a pilot phase of experimentation and data gathering which before they can properly answer this question.
 
-    \section{Risks \& Considerations} % \section{Additional implications/changes/effects}
-    In this section, we focus on risks and considerations that can influence design and implementation choices of a preconf protocol. They are split into different categories according to the entity that could be the most affected by them. It is essential to note that this is not an exhaustive list as novel risks and considerations may emerge, for example, with the introduction of new EIPs for Ethereum~\cite{W:Future-ProofingPreconfirmations}. Furthermore, the economic viability of preconf protocols is a major consideration, but it will not be analysed further since it was already covered in depth in Section \dk{add reference to the Economics section}.
+    \subsection{Preconfer caveats} \label{preconfer_caveats}
 
-    \subsection{for the ecosystem \dk{or everybody/systemic}}
-
-    \begin{itemize}
-        \item \textbf{Smart contract risk:} Similarly to every Web3 protocol that is controlled by smart contracts, preconfs can be prone to smart contract risk, i.e. code errors and vulnerabilities~\cite{W:SmartContractVulnerabilitiesandMitigationStrategies}. The risk could be amplified because the concept of preconfs is recent, complicated and has not been thoroughly battle-tested yet. To mitigate risk, smart contracts must be extensively audited to ensure that they are trustworthy before they are deployed~\cite{W:CrediblyNeutralPreconfirmationCollateral:ThePreconfirmationRegistry}. Another potential idea would be the creation of a competitive environment between different preconf protocols and between preconfer as proposed in \cite{W:ThePreconfirmationSauna}. Such an environment encourages a repeated game from which existing protocols will be improved and new protocols will emerge.
+        Preconfers are required to lock up slashable collateral and opt-in to slashing conditions, described in Section~\ref{preconfer_punishment}. \qb{Im not sure if this is holistically true; single-proposer L2s can provide preconfs without the collateral requirements.} Slashing is the main risk that preconfers take on. Slashing conditions are implemented to deter malicious preconfer behaviour. However, as explained in Section \ref{preconfer_faults_and_punishing_conditions}, even honest preconfers may be vulnerable to accidental liveness slashing~\cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}.
+        The best way to avoid slashing is to honestly follow the preconf protocol. Furthermore, preconfers can chain their preconfs to mitigate the risk of accidental liveness slashing~\cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}. This is described in Section~\ref{preconfer_faults_and_punishing_conditions}.
+        % Additionally, as seen in \ref{preconfer_faults_and_punishing_conditions}, a chained preconfs system was introduced to prevent accidental liveness slashing~\cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}.
+        \begin{riskbox}{Slashing}
+            \risk{Potential for being slashed, intentionally or accidentally.}
+            \mitigation{Follow the protocol rules, and chain preconfs.}
+        \end{riskbox}
         
-        \item \textbf{Centralisation problem:} Inevitably, any implementation of preconfs will require a certain level of additional sophistication. As a result, preconfers may choose to outsource technical expertise by delegating preconf duties to gateways. The more complicated the protocol becomes, the less participants will be able to follow and less entities will be entrusted with preconfer duties. This could pose a major centralisation risk for the whole ecosystem~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization,W:BecomingBased:APathtowardsDecentralisedSequencing}.\dk{should we also talk about overseers here?}
+        Beyond protocol-enforced risks of slashing, preconfers may also face legal challenges. As preconfs resemble a formal agreement, it raises the question as to whether a preconf could constitute a legally binding contract. If so, violating the protocol's punishing conditions could carry legal implications for the preconfer.
+        To mitigate this risk, preconf protocols may need to consider including explicit disclaimers to limit the legal liability of preconfers.
+        \begin{riskbox}{Legal risks \qb{not sure I agree with this}}
+            \risk{Preconfs could be considered legally-binding commitments.}
+            \mitigation{Protocols could include explicit disclaimers.}
+        \end{riskbox}
+        Preconfers are expected to be sophisticated entities. The complexity of being a preconfer and meeting capital requirements are considerations for potential preconfers~\cite{W:Towardsanimplementationofbasedpreconfirmationsleveragingrestaking,W:AnalysingExpectedProposerRevenuefromPreconfirmations}. For these reasons, some preconf protocols allow for preconfers to delegate their preconfing duties, as discussed in Section~\ref{sec:preconfirmers_preliminaries}
+        \begin{considerationbox}{Requirement for preconfer sophistication}
+            \consideration{Preconfing requires sophistication and capital.}
+            \mitigation{Delegate preconfing duties to sophisticated entities.}
+        \end{considerationbox}
+        % Builders and other entities already have the infrastructure and experience to take on additional expertise. Consequently, proposers could delegate their preconf duties to them. However, delegation must be done in a controlled way otherwise it can lead to centralisation~\cite{W:Towardsanimplementationofbasedpreconfirmationsleveragingrestaking,W:AnalysingExpectedProposerRevenuefromPreconfirmations}. \todoqb{review sec}
+
+        %not sure i would call this a risk/consideration for preconfers, but for the protocol itself
+        % When all preconfer duties are performed by a single entity in each slot, fault attribution is relatively straightforward in case of punishing condition violation. Nonetheless, attribution becomes significantly more convoluted when duties are delegated or distributed~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization}
+        % \begin{caveatbox}{Fault attribution}
+        %     \consideration{ssss}
+        %     \mitigation{tttt}
+        % \end{caveatbox}
+        % Protocols that support the separation of the preconf pipeline among multiple independent entities should carefully design mechanisms to ensure that fault attribution remains as transparent and objective as possible.
+
+
+    \subsection{User caveats}
+
+        Preconfers are not the only entity that will need to become more sophisticated. Preconfs also entail some additional sophistication for users~\cite{W:AnalysingExpectedProposerRevenuefromPreconfirmations}. Users requesting a preconf must calculate an appropriate preconf tip, compose a valid preconf request (as seen in Section~\ref{preconf_request}) and identify the right preconfer(s) or endpoint to send requests to~\cite{W:AnalyzingBFTProposer-PromisedPreconfirmations}. However, wallets might abstract away this complexity for users by creating preconf requests with default parameters, similarly to how they automatically set the gas limit, and give advanced users the option to manually set the preconf request parameters~\cite{W:PreconfirmationsforVanillaBasedRollups}. 
+        \begin{considerationbox}{Requirement for user sophistication}
+            \consideration{Added complexity for getting transactions preconfed.}
+            \mitigation{Have wallets abstract away complexity.}
+        \end{considerationbox}
+        A further consideration for users is the implication of preconfs on gas pricing and fees. As explained in Section~\ref{EconomicViabilityOfPreconfs}, the viability of preconfing depends on sufficient economic incentives. For this reason, preconfed transactions are expected to be more costly than regular transactions, with preconf tips compensating preconfers for their service. Furthermore, preconfs provide users with better inclusion and execution commitments compared to regular transactions. In the long run, this could result in an increased demand for blockspace, which would affect gas pricing for all users. \todoqb{im not convinced by the gas pricing claim but I left it in for now} There are no direct mitigations for users regarding the additional cost of preconf tips. However, if there is sufficient demand for preconfs, preconfers may require lower tips for this service to remain economically viable.
+        % A further consideration for users is the implications of preconfs on transaction fees. As explained in Section \dk{add reference to the Economics section}, the viability of preconfing depends on sufficient economic incentives. For this reason, preconfed transactions are expected to be more costly than regular transactions, with preconf tips compensating preconfers for their service. \qb{not convinced by the gas pricing argument}. There is no direct mitigation for users in this regard. However, if there is sufficient demand for preconfs, preconfers may require lower tips for this service to remain economically viable. \qb{flawed}
+        \begin{considerationbox}{Fees}
+            \consideration{Preconfs are more costly than regular transactions.}
+            \mitigation{Out of users' hands; contingent on market dynamics.}
+        \end{considerationbox}
+       
+        % Provided that preconfs are widely adopted, users who continue to submit non-preconfed transactions might face a disadvantaged position. It is possible that sophisticated users will use preconfs to front-run these users~\cite{W:AnalyzingBFTProposer-PromisedPreconfirmations}.
+        % \begin{riskbox}{Front-run hazard for non-preconfed transactions}
+        %     \risk{ssss}
+        %     \mitigation{tttt}
+        % \end{riskbox}
+        %  The risk can be mitigated by seamlessly integrating preconfs in the ecosystem and mask additional complexity with the wallet.
+        % % DK: NO CLEAR EVIDENCE FOUND TO PROVE THE EXISTANCE OF THIS:
+        % \item \textbf{Deposit requirement:} 
+        % % certain protocol desings
+        % % not a widely adopted design choice
+        % % requirement to maintain funds in multiple platforrms, depends on the design (not standard) some protocols require users to post a collateral (Proposer-Commitment Infrastructure in Ethereum)
+
+    \subsection{Holistic caveats}
     
-        \item \textbf{Liveness:}
+         Similarly to every protocol controlled by smart contracts, preconf protocols are prone to smart contract risks~\cite{W:SmartContractVulnerabilitiesandMitigationStrategies}. This risk may be amplified given the nascency and complexity of preconf protocols. Potential mitigation strategies include extensive auditing of contracts before they are deployed~\cite{W:CrediblyNeutralPreconfirmationCollateral:ThePreconfirmationRegistry}, or opting to use an overseer to handle preconfer punishments instead of a smart contract EM.
+         \begin{riskbox}{Smart contract risk}
+            \risk{Smart contracts are vulnerable to exploit.}
+            \mitigation{Extensively audit contracts, or limit their use.}
+         \end{riskbox}
+         %  Another potential idea would be the creation of a competitive environment between different preconf protocols and between preconfer as proposed in \cite{W:ThePreconfirmationSauna}. Such an environment encourages a repeated game from which existing protocols will be improved and new protocols will emerge. 
+
+
+
+        As described in Section~\ref{preconfer_caveats}, preconfers may delegate their preconfing duties to more specialised entitites, such as gateways. As the preconfer role becomes more sophisticated, fewer entities can reliably provide the service, and consequently delegation is expected to grow. Centralizing preconfing to a few specialized entities may lead to rent extraction, censorship of select transactions, and introduces single points of failure~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization,W:BecomingBased:APathtowardsDecentralisedSequencing}.
+        \begin{riskbox}{Centralization}
+            \risk{Monopoly pricing, censorship, and single points of failure}
+            \mitigation{}
+        \end{riskbox}
+
         Implementations that grant exclusive preconfer rights to a single entity in each slot might be exposed to liveness risk. Granting complete control creates a single point of failure and raises censorship concerns for the duration of the slot~\cite{W:StrawmanningBasedPreconfirmations,W:BasedPreconfirmationswithMulti-roundMEV-Boost}. 
         % This is an issue with "streaming" continuous preconfs. 
+        \begin{riskbox}{Liveness}
+            \risk{}
+            \mitigation{}
+        \end{riskbox}
+        % Mitigation maybe fallback mechanism? 
         
-        \item \textbf{Latency races:} 
         Users could potentially benefit from having the lowest latency to the preconfers in protocols that offer continuous preconfs\dk{the term continuous preconfs should be explained, maybe in the economics section}. Minimum latency can maximise MEV back-running profit as users with the lowest latency can have priority to accessing the latest chain state and submitting back-run txs. Besides creating inequalities among users, latency races can also lead to geographical centralisation~\cite{W:StrawmanningBasedPreconfirmations}. 
-        Single-proposer protocols are more exposed to this risk as the location of the preconfer remains constant. A potential solution could be batching preconfs in subslots instead of proving them continuously~\cite{W:BasedPreconfirmationswithMulti-roundMEV-Boost}.
-                
-        \item \textbf{Congestion:} 
-        Protocols that support continuous preconfs may also be vulnerable to congestion risk. Especially in L2s where gas fees are lower, users can spam the network with probabilistic arbitrage attempts. Congestion increases gas prices as a result of increased demand for block space. At the same time, block space is wasted in failed arbitrage txs. The congestion risk could be mitigated with an auction-based system that encourages users to participate in a bidding contest instead of flooding the network~\cite{W:StrawmanningBasedPreconfirmations,W:BasedPreconfirmationswithMulti-roundMEV-Boost}.
-    
-    \end{itemize}
+        Single-proposer protocols are more exposed to this risk as the location of the preconfer remains constant. 
+        \begin{riskbox}{Latency races}
+            \risk{ssss}
+            \mitigation{tttt}
+        \end{riskbox}
+        A potential solution could be batching preconfs in subslots instead of proving them continuously~\cite{W:BasedPreconfirmationswithMulti-roundMEV-Boost}.
 
-    \subsection{for preconfers}
-    \begin{itemize}
-        \item \textbf{Slashing:}
-        Preconfers are required to opt-in to punishing conditions, including slashing conditions, and lock up a slashable collateral. Slashing is probably the main risk that preconfers take on. Slashing conditions act as a safeguard designed to deter malicious behaviour. However, as explained in section \ref{preconfer_faults_and_punishing_conditions}, even honest preconfers may be vulnerable to accidental liveness slashing~\cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}.
+        Protocols that support continuous preconfs may also be vulnerable to congestion risk. Especially in L2s where gas fees are lower, users can spam the network with probabilistic arbitrage attempts. Congestion increases gas prices as a result of increased demand for block space. At the same time, block space is wasted in failed arbitrage txs. 
+        \begin{riskbox}{Congestion}
+            \risk{ssss}
+            \mitigation{tttt}
+        \end{riskbox}
+        The congestion risk could be mitigated with an auction-based system that encourages users to participate in a bidding contest instead of flooding the network~\cite{W:StrawmanningBasedPreconfirmations,W:BasedPreconfirmationswithMulti-roundMEV-Boost}.
 
-        
-        \item \textbf{Sophistication requirements:} 
-        Preconf protocols are bound to have some sophistication requirements from the preconfers. The complexity requirements, paired with any implicitly necessary capital requirements, should be a serious consideration for potential preconfers. Meanwhile, builders already have the infrastructure and experience to take on additional expertise. Consequently, proposers may be tempted to delegate their preconf duties to builders which, if left uncontrolled, can lead to the aforementioned centralisation problem~\cite{W:Towardsanimplementationofbasedpreconfirmationsleveragingrestaking,W:AnalysingExpectedProposerRevenuefromPreconfirmations}.
-        
-        \item \textbf{Fault attribution:}
-        When all preconfer duties are performed by a single entity in each slot, fault attribution is relatively straightforward in case of punishing condition violation. Nonetheless, attribution becomes significantly more convoluted when duties are delegated or distributed~\cite{W:DelegationinBolt:OutsourcingSophisticationWhilePreservingDecentralization}. Protocols that support the separation of the preconf pipeline among multiple independent entities should carefully design mechanisms to ensure that fault attribution remains as transparent and objective as possible.
-        
-        \item \textbf{Legal risk:} 
-        The legal risk associated with preconfs is not widely discussed. However, the structure of a preconf shares common characteristics with a formal agreement, raising the question of whether a preconf could constitute a legally binding contract. If so, violating the protocol's punishing conditions could potentially carry legal consequences for the preconfer. To mitigate this risk, protocols may need to consider including explicit disclaimers to limit the legal liability of preconfers.
+    \subsection{L2 caveats}
 
-    \end{itemize}
-    
-    \subsection{for users}
+         % not every L1 proposer has opted-in to give preconfs (Analyzing BFT & Proposer-Promised Preconfirmations)
+        \begin{riskbox}{Increased delay on tx execution \cm{maybe not here}}
+            \risk{}
+            \mitigation{}
+        \end{riskbox}
 
-    \begin{itemize}
-        \item \textbf{Increased gas prices:} 
-        % potential implication / collateral effect
-        % may affect all users and not just the ones requesting preconfs
-        % Making preconfs attractive to proposers probably requires increasing gas fees. 
-        % Also increased demand from improved UX can drive gas prices up
-        
-        \item \textbf{Sophisticated user requirement:} % requesting a preconf entails some additional sophistication, most sophistication could be hidden behind the wallet (Analysing Expected Proposer Revenue from Preconfirmations)
-        
-        \item \textbf{Frontrun hazard for non-preconfirmed txs:} %preconfs may bring a requirement for everyone to use preconfs, which may be worse UX for some users. Can we have preconfs which are "at least as easy to use as current transactions?"  if everyone is doing preconfs and you don't, you might be in a bad position (Analyzing BFT & Proposer-Promised Preconfirmations)
-        
-        \item \textbf{Deposit requirement:} 
-        % certain protocol desings
-        %requirement to maintain funds in multiple platforrms, depends on the design (not standard) some protocols require users to post a collateral (Proposer-Commitment Infrastructure in Ethereum)
-    \end{itemize}
-    
-    \subsection{for L1 scaling solutions (LNs)}
-    \begin{itemize}
-        \item \textbf{Increased delay on transaction execution:} % not every L1 proposer has opted-in to give preconfs (Analyzing BFT & Proposer-Promised Preconfirmations)
-        
-        \item \textbf{Fallback based preconfer needs to be implemented correctly:} % Mechanism that ensures liveness by reassigning preconfer rights when there is no active preconfer. This happends when there are no based preconfers left in current epoch or the current preconfers are not responding. (Sequencer Opt-In, Discovery and Communication, Becoming Based: A Path towards Decentralised Sequencing)
-        
-        \item \textbf{Trade-off between centralised and decentralised sequencing:} % centralised: high thoughput, low latency, easy preconfs but it has centralisation, censorship, liveness hazards and trust requirements. Widely adopted based rollups with preconfs can achieve high performance (Becoming Based: A Path towards Decentralised Sequencing)
-    \end{itemize}
+
+        \begin{considerationbox}{Correctly implementation of fallback mechanism}
+            \consideration{}
+            \mitigation{}
+        \end{considerationbox}
 
 
 \section{Implementations \& existing protocols}
