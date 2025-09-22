@@ -361,7 +361,7 @@ To define preconfirmations, we use the concept of logical predicates. A predicat
         \label{def:contentious state}
         \textbf{Contentious state} is a state element upon which concurrent transactions attempt to act, creating a race condition among transactions to act on the state element first.
         \end{definition}
-        \chm{Is it really the state that is contentious? Given just the state, it seems this cannot be decided without knowing which transactions try to act on it. Maybe better to define contentious transaction?}
+        \chm{This is only a problem if the transactcions are mutually exclusive. Also based on the definition, it can only be decided whether state is contentious given a set of transactions. Alternative would be, e.g., to define state as contentious if there is an opportunity to profit from acting on it, e.g., via arbitrage, liquidation, etc.}
         Examples of contentious state include arbitrage and liquidation opportunities on a blockchain. For a transaction trying to act on such opportunities, or contentious state in general, execution preconfs are more comprehensive commitments than inclusion preconfs~\cite{W:ATaxonomyofPreconfirmationGuaranteesandTheirSlashingConditionsinRollups}.
         \begin{definition}
         For a given blockchain, transaction $\mathrm{tx_1}$ and sequences of transactions $\mathrm{stx}_1$, an \textbf{execution preconf} is a preconf where the predicate is a function that returns true if $\mathrm{tx_1}$ is included in the blockchain ledger immediately after $\mathrm{stx}_1$.
@@ -798,6 +798,7 @@ To address the tension of users wanting preconf responses quickly, and proposers
      \cm{we probably want to add some of the empirical evidence related to mev-commit and EthGas}
      \ks{\url{https://www.nethermind.io/blog/optimizing-restaking-yields-a-hybrid-quantitative-qualitative-model}} \ks{Lin any suggestions?}
     
+     \chm{We can add a summary of \url{https://ethresear.ch/t/measuring-validator-economics-under-preconfirmations-early-mainnet-evidence/23066}}
     
     \subsubsection{Execution Preconfs \& Proposer Revenue}\label{sec:execpreconfproposerrevenue}
     Unlike inclusion preconfs, execution preconfs must \ks{ be executed} in a specific way, typically at a specific position in a specific sequence of transactions. This stands as a significant restriction for a preconfer, with significant implications on a proposer's expected revenue when offering execution preconfs. The models presented in \cite{W:EstimatingtheRevenuefromIndependentSub-SlotAuctionPreconfirmations, W:AnalysingExpectedProposerRevenuefromPreconfirmations, W:PreconfirmationsundertheNOlens} represent the main contributions in the space at time of writing. 
@@ -861,9 +862,9 @@ To address the tension of users wanting preconf responses quickly, and proposers
 
     \subsubsection{Execution Preconf Pricing}
 
-    To the best of our knowledge, there have been no meaningful pricing models proposed for execution preconfs. For a preconfer, pricing execution preconfs amounts to \ks{translates to} continuously observing, analyzing, and responding to incoming preconf requests throughout a slot. This is significantly more computationally complex than building a single block at the end of a slot. Given the complexity and sophistication required to build whole blocks, as shown by the oligopolistic nature of MEV-Boost auctions, execution preconf pricing stands as a highly complex open problem. 
+    To the best of our knowledge, there have been no meaningful pricing models proposed for execution preconfs. For a preconfer, pricing execution preconfs amounts to \ks{translates to} continuously observing, analyzing, and responding to incoming preconf requests throughout a slot \chm{One should respond to requests during the slot also for inclusion preconfs}. This is significantly more computationally complex than building a single block at the end of a slot. Given the complexity and sophistication required to build whole blocks, as shown by the oligopolistic nature of MEV-Boost auctions, execution preconf pricing stands as a highly complex open problem. 
     
-    Some form of permissionless preconf pricing is being performed in Arbitrum's Timeboost \cite{TimeBoostDocs}, although the algorithms being used to participate meaningfully in Timeboost remain proprietary and closed-source. Timeboost allows preconfers to bid for the right to preconf Arbitrum for a fixed amount of time. According to this dune query \cite{TimeboostAuctionWinnerBreakdown} \ks{what is a dune query?}, more than 90\% of Timeboost auctions are being won by 2 people-- an early sign that preconf pricing will follow similar, if not more extreme centralization trends as those observed in the MEV-Boost markets. For comparison, \ks{as already mentioned,} at any given time in the last 2 years, 2-3 builders have been responsible for 90\% of blocks proposed through MEV-Boost\cite{MEVBoostShares}.
+    Some form of permissionless preconf pricing is being performed in Arbitrum's Timeboost \cite{TimeBoostDocs}, although the algorithms being used to participate meaningfully in Timeboost remain proprietary and closed-source. Timeboost allows preconfers to bid for the right to preconf Arbitrum for a fixed amount of time. \chm{In which sense is that the case? In my understanding, Timeboost allows one to buy access to a priority lane where transactions are included faster. How does this relate to preconfs?} According to this dune query \cite{TimeboostAuctionWinnerBreakdown} \ks{what is a dune query?}, more than 90\% of Timeboost auctions are being won by 2 people-- an early sign that preconf pricing will follow similar, if not more extreme centralization trends as those observed in the MEV-Boost markets. For comparison, \ks{as already mentioned,} at any given time in the last 2 years, 2-3 builders have been responsible for 90\% of blocks proposed through MEV-Boost\cite{MEVBoostShares}.
 
     \cm{Insert mev-commit findings}
 
@@ -1056,7 +1057,7 @@ To address the tension of users wanting preconf responses quickly, and proposers
     \subsubsection{Liveness: User}
         \begin{itemize}
             \item fulfillment depends on preconfers / proposers / preconf protocol in general not going offline, \cm{ / not being malicious}
-            \item \cm{users receiving preconfs may be tempted/convinced to use these preconfs to perform other actions in other domains e.g buy Eth via preconf, sell Eth on Binance. This is similar risk as waiting for transaction to become finalized on the blockchain ledger. Risk is different for preconf vs proposed for consensus}
+            \item \cm{users receiving preconfs may be tempted/convinced to use these preconfs to perform other actions in other domains e.g buy Eth via preconf, sell Eth on Binance. This is similar risk as waiting for transaction to become finalized on the blockchain ledger. Risk is different for preconf vs proposed for consensus} \chm{This risk can be mitigated if users are compensated for non-fulfillment as possible in mev-commit.}
             \item requests may expire if proposer/preconfer offline 
         \end{itemize}
     
