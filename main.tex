@@ -7,9 +7,7 @@
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{textcomp}
-\usepackage[dvipsnames]{xcolor}
-\usepackage{xcolor}
-\usepackage[table]{xcolor}
+\usepackage[dvipsnames,table]{xcolor}
 \usepackage{array}
 \usepackage{mdframed}
 \usepackage[most]{tcolorbox}
@@ -144,6 +142,7 @@
 \newcommand{\dk}[1]{\textcolor{cyan}{\textbf{Demetris:} #1}}
 \newcommand{\open}[1]{\textcolor{green}{\textbf{open:} #1}}
 \newcommand{\ks}[1]{\textcolor{purple}{\textbf{Katerina:} #1}}
+\newcommand{\chm}[1]{\textcolor{Maroon}{\textbf{Christian:} #1}}
 
 \newcommand{\todocm}[1]{\todo[color=blue!40]{\textbf{Conor:} #1}}
 \newcommand{\todoqb}[1]{\todo[color=red!40]{\textbf{Quentin:} #1}}
@@ -331,6 +330,7 @@ To define preconfirmations, we use the concept of logical predicates. A predicat
         \end{definition}
 
         \cm{intuition for this definition is super important. Although we want the main definition to be formal, we want the definition/context to be understood by everyone} 
+        \chm{I'm not following. I'd say the commitment is the preconf. Examples here would be useful.}
         
          \par
          Preconfs depend on some mechanism to ensure that any predicates committed to by a preconfer can be satisfied. Without such a mechanism, a preconfer's promise is not credible or meaningful. To describe this process of satisfying a preconf's predicate, we introduce the concept of \ks{fulfillment} in the following definition:
