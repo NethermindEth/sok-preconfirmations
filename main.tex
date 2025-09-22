@@ -330,7 +330,7 @@ To define preconfirmations, we use the concept of logical predicates. A predicat
         \end{definition}
 
         \cm{intuition for this definition is super important. Although we want the main definition to be formal, we want the definition/context to be understood by everyone} 
-        \chm{I'm not following. I'd say the commitment is the preconf. Examples here would be useful.}
+        \chm{Not really clear what ``commitment'' means in this context. Also seems too strong to require the predicate to be satisified. Preconfers can break the commitment. Maybe slashing should be mentioned here instead of a strict fulfillment requirement?}
         
          \par
          Preconfs depend on some mechanism to ensure that any predicates committed to by a preconfer can be satisfied. Without such a mechanism, a preconfer's promise is not credible or meaningful. To describe this process of satisfying a preconf's predicate, we introduce the concept of \ks{fulfillment} in the following definition:
@@ -361,17 +361,19 @@ To define preconfirmations, we use the concept of logical predicates. A predicat
         \label{def:contentious state}
         \textbf{Contentious state} is a state element upon which concurrent transactions attempt to act, creating a race condition among transactions to act on the state element first.
         \end{definition}
+        \chm{Is it really the state that is contentious? Given just the state, it seems this cannot be decided without knowing which transactions try to act on it. Maybe better to define contentious transaction?}
         Examples of contentious state include arbitrage and liquidation opportunities on a blockchain. For a transaction trying to act on such opportunities, or contentious state in general, execution preconfs are more comprehensive commitments than inclusion preconfs~\cite{W:ATaxonomyofPreconfirmationGuaranteesandTheirSlashingConditionsinRollups}.
         \begin{definition}
         For a given blockchain, transaction $\mathrm{tx_1}$ and sequences of transactions $\mathrm{stx}_1$, an \textbf{execution preconf} is a preconf where the predicate is a function that returns true if $\mathrm{tx_1}$ is included in the blockchain ledger immediately after $\mathrm{stx}_1$.
         %An \textbf{execution preconf} is a commitment to the exact sequence of transactions executed up to and including the transaction. This is a type of preconfirmations with respect to Definition \ref{def:preconfirmation} where the preconfer commits to the exact position of the transaction (or sequence of transactions), and to the state before executing this transaction (or sequence of transactions).
         \end{definition}
         %\cm{made some direct edits to this sub-section, please review}
+        \chm{This seems rather restrictive. What about execution preconfs that don't depend on a specific sequence of transactions, but rather on the state before executing the transaction? A weak execution guarantee that also makes sense can be that the transaction will execute successfully (not revert).}
         We refer to transactions that have received inclusion or execution preconfs as inclusion preconfirmed and execution preconfirmed transactions, respectively. When the context of inclusion preconf or execution preconf is clear or unimportant, we simplify these terminologies to just preconfirmed transactions.
         
-        Providing execution preconfs is more complex and comes with additional block-building constraints compared to providing inclusion preconfs. Execution preconfs can only be given for the current slot, as execution preconfs require knowledge of the sequence of transactions in the blockchain ledger before the current slot.  
+        Providing execution preconfs is more complex and comes with additional block-building constraints compared to providing inclusion preconfs. Execution preconfs can only be given for the current slot, as execution preconfs require knowledge of the sequence of transactions in the blockchain ledger before the current slot. \chm{Not strictly speaking true, transactions for multiple future slots could already be known, especially in L2s with low block times.}
         
-        Less strict execution preconfs not requiring commitments to the entire blockchain sequencing are also possible, such as intent preconfs. An example of an intent is a request to exchange a specific amount of token A for some minimum amount of token B without a specific user transaction. Intent preconfs are outside the scope of this document. For more information on intent preconfs, see \cite{W:Intent-BasedArchitectureandTheirRisks, ERC-7521}.
+        Less strict execution preconfs not requiring commitments to the entire blockchain sequencing are also possible, such as intent preconfs. An example of an intent is a request to exchange a specific amount of token A for some minimum amount of token B without a specific user transaction. Intent preconfs are outside the scope of this document. \chm{Why? If this SoK wants to set a standard for definitions, they should not exclude already existing preconf types.} For more information on intent preconfs, see \cite{W:Intent-BasedArchitectureandTheirRisks, ERC-7521}.
 
          % Although execution preconfs can be given at any time in advance of expected fulfillment, not knowing the pre-execution state introduces risk for the preconfer.
 
@@ -415,7 +417,7 @@ To define preconfirmations, we use the concept of logical predicates. A predicat
         Preconfers have varying abilities to fulfill preconfs. Block proposers -- whether for L1 or L2 -- are ideal candidates for preconfers. This is because proposers can enforce fulfillment of their preconfs by virtue of their control over block construction and proposal.
         %\cm{I think the remainder of this paragraph can be removed. It's not very specific, and doesn't provide any additional information. Do we want to re-use the references somewhere else?} \qb{agreed} L1 and based L2 preconfs are provided by validators who are scheduled to propose in upcoming slots in L1. Similarly, based L2 preconfs can be issued by L1 proposers of the future slots, with the difference that they need to have opted in to do so. This is explained in detail in \hyperref[step1:preconfer_registration]{Section~\ref{step1:preconfer_registration}}. Non-based L2 preconfs can be delivered by the L2 proposer, if the L2 has a single proposer per block cf. \cite{Optimism, Arbitrum, ZKsync, Starknet}. \ks{Lin all these are non based L2s right?}
         
-        Although proposers make ideal candidates for preconfing from a fulfillment perspective, preconfing comes with added complexity for proposers. Proposers can outsource this complexity by delegating their preconfing duties to gateways.
+        Although proposers make ideal candidates for preconfing from a fulfillment perspective, preconfing comes with added complexity for proposers. Proposers can outsource this complexity by delegating their preconfing duties to gateways. \chm{Seems they are not so ideal after all?}
         \begin{definition}
         \label{def:preconfirmation}
         In the context of preconfs, a \textbf{gateway} is a specialized entity that preconfs on behalf of a proposer.
@@ -503,6 +505,7 @@ As already mentioned, in many L2s, the preconfer registry and proposer election 
 \paragraph{How Inclusion vs Execution preconfs affect preconfer schedule}
 
 If the current proposer of a blockchain is not a preconfer, then execution preconfs cannot be credibly provided, even if future proposers in the proposer lookahead are preconfers. This is because the current proposer has control over the next blockchain ledger update, and as such, future preconfers cannot know the blockchain ledger on which they will act.
+\chm{How does this fit with builders as preconfers?}
 
 On the other hand, inclusion preconfs can be issued by many, if not all preconfers. This is because the fulfillment of inclusion preconfs does not depend on the current state of the blockchain ledger.  
 
@@ -549,7 +552,7 @@ There is an interesting preconfer election design for L2s that is not perfectly 
         
         
         \item \textbf{Latest preconfirmed state}: 
-        It is possible for protocols to allow users to specify a commitment to the latest blockchain ledger, concatenated with any transactions that have already been preconfirmed since the last ledger update. This gives users control over the transaction sequence their request acts on.  ~\cite{W:AnalyzingBFTProposer-PromisedPreconfirmations}
+        It is possible for protocols to allow users to specify a commitment to the latest blockchain ledger, concatenated with any transactions that have already been preconfirmed since the last ledger update.\chm{Hard to understand.} This gives users control over the transaction sequence their request acts on.  ~\cite{W:AnalyzingBFTProposer-PromisedPreconfirmations}
 
         
         \item \textbf{Privacy preferences:} 
@@ -562,7 +565,7 @@ There is an interesting preconfer election design for L2s that is not perfectly 
 \subsection{Step 4: Preconf Response} \label{preconf_response}
       
     After observing a preconf request and verifying its validity, the preconfer must then choose whether to provide a preconf or not. This section describes the process of responding to preconf requests. Generally, preconfers should be incentivised by the protocol to provide timely responses to users in order to improve UX. To incentivize timely responses, we require a suitable tipping mechanism (as discussed in Sections \ref{preconf_request} and \ref{sec:price}), along with a protocol that ensures the preconfer receives the tip only if the preconf is provided no later than the agreed-upon time (as discussed in Section \ref{fair_exchange_problem}.) \todoks{consistent internal referencing}
-
+    \chm{It seems a preconf response is the preconf. The term ``response'' suggests it is something given in reply to a preconf.}
     
     Responding to a preconf request binds the preconfer to a commitment to include or execute the preconfirmed transaction. In many protocols, preconf responses also serve as evidence for punishing dishonest preconfers who fail to fulfill stated commitments (cf. URC described in Section \ref{URC}). \todoks{consistent internal referencing} 
     Preconf responses must be signed by the preconfer. Additional, responses may include (but are not restricted to):
@@ -584,7 +587,7 @@ There is an interesting preconfer election design for L2s that is not perfectly 
     \begin{itemize}
         \item Immediately upon commitment to fulfill the preconf (streaming) \url{https://ethresear.ch/t/the-preconfirmation-gateway-unlocking-preconfirmations-from-user-to-preconfer/18812} \todoks{add reference}
         \item At regular time intervals
-        \item In batches -- for example, after every ten responses \todoks{consistency with examples}
+        \item In batches -- for example, after every ten responses \chm{This is confusing. A response is only given after every ten responses? Then no response is ever given.} \todoks{consistency with examples}
         \item Upon request, granting access to previously issued responses
     \end{itemize}
     \todoks{Conor added a new paragraph to separate response formatting from preconf timings. Please review.}
@@ -598,7 +601,7 @@ There is an interesting preconfer election design for L2s that is not perfectly 
     The \textbf{fair exchange problem} states that during a mutual exchange of items between two parties, it is vital to guarantee that both parties or neither party receive the expected item. No party should have the ability to gain an advantage by misbehaving or quitting the transaction prematurely~\cite{P:Fairexchangewithasemi-trustedthirdparty,T:Fairnessinelectroniccommerce}.
     \end{definition}
 
-    In the context of preconfs, users should have some expectation of how and when responses are received after submitting a request. This expectation depends on many factors, including but not limited to the type of preconf, the tip being paid, the cost to provide and fulfill the preconf, the relative demand for transactions/preconfs at the time the request was sent, and the value that a preconfer can extract from the preconf beyond the tip. Crucially, a preconf user's expectation has a time component built in -- users typically want preconfs sooner rather than later. This makes the fair exchange of preconfs more complex than eventual fair exchange of request and response. \cite{W:PreconfirmationFairExchange} introduces the concept of timely fair exchange to explain this user preference in the context of preconf protocols. Previous work on fair exchange proved that it is impossible to enforce fair exchange without a trusted third party~\cite{P:OntheImpossibilityofFairExchangewithoutaTrustedThirdParty}. As such, preconf protocols need to introduce some form of trusted third party in order to provide meaningful guarantees of timely fair exchange.
+    In the context of preconfs, users should have some expectation of how and when responses are received after submitting a request. This expectation depends on many factors, including but not limited to the type of preconf, the tip being paid, the cost to provide and fulfill the preconf, the relative demand for transactions/preconfs at the time the request was sent, and the value that a preconfer can extract from the preconf beyond the tip. Crucially, a preconf user's expectation has a time component built in -- users typically want preconfs sooner rather than later. This makes the fair exchange of preconfs more complex than eventual fair exchange of request and response. \cite{W:PreconfirmationFairExchange} introduces the concept of timely fair exchange to explain this user preference in the context of preconf protocols. Previous work on fair exchange proved that it is impossible to enforce fair exchange without a trusted third party~\cite{P:OntheImpossibilityofFairExchangewithoutaTrustedThirdParty}. As such, preconf protocols need to introduce some form of trusted third party in order to provide meaningful guarantees of timely fair exchange. \chm{Can't a smart contract on the blockchain be the trusted third party?}
     
     \begin{definition}
     \label{def:overseer}
@@ -638,7 +641,7 @@ In the case of non-based L2s with mutliple proposers, the rules of the underlyin
 
 In the case where a full block is being used for preconfs, a preconfer can build the block themselves and ensure fulfillment of all preconfs. In the case where only a partial block is used for preconfs, and the final block is built at proposal time, potentially including non-preconfs, there must be a mechanism in place to ensure the final block satisfies all preconfs. A simple algorithm for achieving this is including all preconfed transactions first in a block, followed by the remainder of the block. However, when any of these preconfed transactions are inclusion preconfs, this simple algorithm is likely sub-optimal for a proposer with regard to capturing block-building revenue. As inclusion preconfs can be placed anywhere in a block, a proposer can strategically place these preconfs to maximize their MEV revenue. 
 
-That being said, this problem of maximizing the value of blocks given some constraints has parallels to the ordered knapsack problem ~\cite{P:Partiallyorderedknapsackandapplicationstoscheculing}, which requires significant sophistication to solve for the knapsack sizes and number of items that modern blockchains provides. This problem has been terms the Online Block Packing problem \cite{OnlineBlockPacking}. To allow proposers to outsource this complex optimization problem while still receiving revenue from the solution, the Constraints API~\cite{W:ConstraintsAPISpecification} has been proposed as a tool to allow proposers to offer preconfs (or apply arbitrary constraints on a block), and then outsource the building of a block satisfying all preconf predicates to a set of builders, analogously to how proposers outsource building through MEV-Boost \cite{MEV-Boost}. 
+That being said, this problem of maximizing the value of blocks given some constraints has parallels to the ordered knapsack problem ~\cite{P:Partiallyorderedknapsackandapplicationstoscheculing}, which requires significant sophistication to solve for the knapsack sizes and number of items that modern blockchains provides. This problem has been terms \chm{Typo?} the Online Block Packing problem \cite{OnlineBlockPacking}. To allow proposers to outsource this complex optimization problem while still receiving revenue from the solution, the Constraints API~\cite{W:ConstraintsAPISpecification} has been proposed as a tool to allow proposers to offer preconfs (or apply arbitrary constraints on a block), and then outsource the building of a block satisfying all preconf predicates to a set of builders, analogously to how proposers outsource building through MEV-Boost \cite{MEV-Boost}. 
 
 \subsubsection{Fulfillment Tradeoffs: Proposer vs Gateway}
 \label{delivery_tradeoffs}
@@ -654,7 +657,7 @@ In \cite{gateway_trust_liveness}, it is proposed to penalise entities based on t
 
 \subsubsection{Designing Robust Fulfillment Mechanisms}\label{robust_delivery}
 
-    In any preconf protocol where preconfer rotation takes place, it is possible that a preconfer fails to fulfill their preconfs. Although this non-fulfillment may be malicious, non-fulfillment of preconfs can also be unintentional. Some thought has been given to protecting against unintentional failures to fulfill preconfs.
+    In any preconf protocol where preconfer rotation takes place \chm{Also possible if no rotation takes place.}, it is possible that a preconfer fails to fulfill their preconfs. Although this non-fulfillment may be malicious, non-fulfillment of preconfs can also be unintentional. Some thought has been given to protecting against unintentional failures to fulfill preconfs.
     
      The authors of \cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs} suggest that preconfers can collaborate with subsequent preconfers through revenue sharing to preconf the same transaction sequences in the event that the original preconfer fails to fulfill the preconfs themselves. This approach is termed \textbf{chaining} preconfs. Although the exact incentives and guarantees of chaining are unexplored, chaining provides a protocol design direction to protect preconfers and their users from the risks of failing to fulfill preconfs. 
      
@@ -712,7 +715,7 @@ In \cite{gateway_trust_liveness}, it is proposed to penalise entities based on t
     \begin{figure}[htbp]
         \centering
         \includegraphics[width=0.9\textwidth]{figures/preconferFaultDecisionTree.png}
-        \caption{Preconfer fault decision tree.}
+        \caption{Preconfer fault decision tree.\chm{Typo ``precof''}}
         \label{preconfer fault tree}
     \end{figure}
     
