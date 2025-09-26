@@ -331,17 +331,54 @@ To define preconfirmations, we use the concept of logical predicates. A predicat
 
         \cm{intuition for this definition is super important. Although we want the main definition to be formal, we want the definition/context to be understood by everyone} 
         \chm{Not really clear what ``commitment'' means in this context. Also seems too strong to require the predicate to be satisified. Preconfers can break the commitment. Maybe slashing should be mentioned here instead of a strict fulfillment requirement?}
+
+        ---
+
+        \chm{Suggested rephrasing of Definition 1 and addition:}
+        \begin{definition}
+            For a given blockchain, a \textbf{preconfirmation (preconf)} is a promise that some specified predicate function $\mathsf{f}$ will be satisfied by a future state of the blockchain ledger.
+        \end{definition}
+
+        For example, the predicate function could be that a specific transaction is included in the blockchain ledger, or that it is included in a specified block, or even at a specified position within a block, etc. See Section~\ref{sec:tx_based_preconfs} for definitions of preconf types and the corresponding predicate functions we focus on in this work.
+
+        In addition, we define \textbf{conditional preconfs} as preconfs for which the corresponding promise only needs to be fulfilled if some condition is met. The condition is also a predicate over the blockchain ledger state.
+        
+        \begin{definition}
+            A \textbf{conditional preconf} for a predicate function $\mathsf{f}$ and a condition $\mathsf{c}$ is a promise that if the condition $\mathsf{c}$ is satisfied by a future state of the blockchain ledger, then the predicate function $\mathsf{f}$ will be satisfied by a (possibly later) future ledger state as well.
+        \end{definition}
+
+        For example, a conditional preconf could promise that a transaction will be included in the blockchain ledger if a specific block builder is selected to build the block for a given slot. This is the type of preconf builders can offer in mev-commit~\cite{W:Documentation-Understandingmev-commit}. Another example of a conditional preconf could be a promise that a transaction will be included in the blockchain ledger if the base fee at a given block is below some threshold.
+
+        \chm{End of suggestion}
+
+        ---
+
+        \chm{It seems we should require monotonicity of the predicate function such that it cannot become false once it was true. Otherwise it becomes weird at which point in time it should be satisfied.}
         
          \par
          Preconfs depend on some mechanism to ensure that any predicates committed to by a preconfer can be satisfied. Without such a mechanism, a preconfer's promise is not credible or meaningful. To describe this process of satisfying a preconf's predicate, we introduce the concept of \ks{fulfillment} in the following definition:
      \begin{definition}\label{def:delivery}
-    A preconf is considered \textbf{fulfilled }if and only if the predicate specified by the preconf is satisfied by the blockchain ledger. Satisfying a preconf's predicate is equivalent to fulfilling the preconf.
+    A \chm{(conditional)} preconf is considered \textbf{fulfilled }if and only if the predicate specified by the preconf is satisfied by the blockchain ledger. Satisfying a preconf's predicate is equivalent to fulfilling the preconf.
     \end{definition}
+
+    ---
+
+    \chm{Suggested addition:}
+    
+    Note that fulfillment is defined equally for both conditional and unconditional preconfs, i.e., a conditional preconf can also be fulfilled if the condition is not met. The condition is relevant for the economics of the preconf (discussed later), where the entity providing the preconf gets rewarded when fulfilling the preconf and punished when violating the promise. For a conditional preconf, both the reward and punishment only apply if the condition is met.
+
+    Note that a conditional preconf for a predicate function $\mathsf{f}$ and a condition $\mathsf{c}$ is not the same as a preconf for the implication $\mathsf{c} \rightarrow \mathsf{f}$. The latter would be fulfilled if the condition $\mathsf{c}$ is not satisfied, and would reward the entity issuing the preconf in this case. In contrast, there is no reward from a conditional preconf if the condition is not satisfied.
+
+
+    \chm{End of suggestion}
+    
+    ---
+
      Preconfs can be implemented in many different ways. Key factors that distinguish preconf implementations include who is providing the preconf, the predicate the preconfer is committed to, and blockchain governance, if it exists. The type of preconf determines which applications and users benefit from them.  We distinguish and explain these varying preconf implementations throughout this document. In this document, we will focus on transaction-based preconfs, defined below.
      
      %Unless otherwise specified and without loss of generality, the term preconf is used generically for any commitment to any future blockchain sequence.
 
-    \subsection{Transaction-based preconfs}
+    \subsection{Transaction-based preconfs}\label{sec:tx_based_preconfs}
     Transaction-based preconfs are preconfs with predicates that have hardcoded a transaction/sequence of transactions. 
     
     \cm{provide intuition here. How would such a predicate be satisfied. Inclusion and execution are this, but there needs to be some connective tissue here.} 
