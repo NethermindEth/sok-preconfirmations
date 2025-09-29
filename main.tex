@@ -537,7 +537,7 @@ This section analyses the general flow of a preconf protocol and the roles of it
 
 Preconfer election is a crucial part of most preconf protocols
 This section examines how preconfers are elected.
-As already mentioned, in many L2s, the preconfer registry and proposer election are aware of each other, and in some cases, they are the same smart contract \cite{Optimism,ZKsync,Arbitrum} \todolo{ add Taiko whitelist link}. In contrast, L1s and based L2s are not typically aware of the preconf registry, or even that preconfs are taking place. In all cases, the preconfer registry must be consulted to identify the schedule of preconfers, and for what slots preconfs can be provided. Thus, the way the next preconfer is elected by the preconfer registry depends on (i) the type of the preconf (inclusion or execution), and (ii) the underlying blockchain and how this blockchain elects proposers.
+As already mentioned, in many L2s, the preconfer registry and proposer election are aware of each other, and in some cases, they are the same smart contract \cite{Optimism,ZKsync,Arbitrum} \todolo{ add Taiko whitelist link}. In contrast, L1s and based L2s are not typically aware of the preconf registry, or even that preconfs are taking place. In all cases, the preconfer registry must be consulted to identify the schedule of preconfers, and for what slots preconfs can be provided. Thus, the way the next preconfer is elected by the preconfer registry depends on (i) the type of the preconf (inclusion or execution), and (ii) the underlying blockchain and how this blockchain elects proposers \chm{or block builders}.
 
 \paragraph{How Inclusion vs Execution preconfs affect preconfer schedule}
 
@@ -545,12 +545,13 @@ If the current proposer of a blockchain is not a preconfer, then execution preco
 \chm{How does this fit with builders as preconfers?}
 
 On the other hand, inclusion preconfs can be issued by many, if not all preconfers. This is because the fulfillment of inclusion preconfs does not depend on the current state of the blockchain ledger.  
-
+\chm{I don't really understand how this affects preconfer schedule. It seems the schedule is just whatever it is and this is a remark about the credibility of preconfs given the current schedule.}
 
 \paragraph{ How the type of the blockchain affects preconfer schedule}
 \begin{itemize}
-    \item \textbf{L1 and based L2s}: Proposers are determined via the L1 proposer election mechanism. L1 preconfer registries -- while not responsible for electing L1 proposers -- can still determine the preconfer schedule, e.g. through EIP-7917~\cite{EIP7917} \todoks{examples consistency}. The preconfer schedule can be determined by finding the intersection of the registered preconfer set and the proposer lookahead, and taking into account whether the preconf is inclusion or execution.
-    \item \textbf{Non-based L2s}: Within non-based L2s, there is a large proposer-preconfer election design space. The preconfer registry can either read from the outputs of a standalone proposer election mechanism as in L1 and based L2 preconfs, or be integrated into the proposer election mechanism ~\cite{, Optimism, Arbitrum, ZKsync, Starknet}. \tododk{Dimitris, we need a reference for non-based L2s}
+    \item \textbf{L1 and based L2 \chm{proposer preconfs}}: Proposers are determined via the L1 proposer election mechanism. L1 preconfer registries -- while not responsible for electing L1 proposers -- can still determine the preconfer schedule, e.g. through EIP-7917~\cite{EIP7917} \todoks{examples consistency}. The preconfer schedule can be determined by finding the intersection of the registered preconfer set and the proposer lookahead, and taking into account whether the preconf is inclusion or execution.
+    \item \textbf{Non-based L2 \chm{proposer preconfs}}: Within non-based L2s, there is a large proposer-preconfer election design space. The preconfer registry can either read from the outputs of a standalone proposer election mechanism as in L1 and based L2 preconfs, or be integrated into the proposer election mechanism ~\cite{, Optimism, Arbitrum, ZKsync, Starknet}. \tododk{Dimitris, we need a reference for non-based L2s}
+    \item \chm{\textbf{Block builder preconfs}. When block builders issue preconfs, the preconfer schedule cannot be predetermined but rather depends on the outcome of the block builder auction. In this case, all registered block builders can issue conditional preconfs, conditioned on the corresponding block builder winning the block builder auction. Which of the builders wins the auction and thus is responsible for fulfilling the preconfs is then determined after the preconfing has taken place. It therefore makes sense for the users to source preconfs from all the registered block builders~\cite{W:LeaderlessandLeader-BasedPreconfirmations}.}
 \end{itemize}
 
 \tododk{KS: assign the following citations to the correct bullet above \cite{Optimism, Arbitrum, ZKsync, Starknet}? We removed them from section 4, so we need to add them here}
