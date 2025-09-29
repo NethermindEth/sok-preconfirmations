@@ -836,7 +836,7 @@ To address the tension of users wanting preconf responses quickly, and proposers
      \cm{we probably want to add some of the empirical evidence related to mev-commit and EthGas}
      \ks{\url{https://www.nethermind.io/blog/optimizing-restaking-yields-a-hybrid-quantitative-qualitative-model}} \ks{Lin any suggestions?}
     
-     \chm{We can add a summary of \url{https://ethresear.ch/t/measuring-validator-economics-under-preconfirmations-early-mainnet-evidence/23066}}
+     \chm{A study based on limited mainnet data from different preconfirmation protocols confirms the thesis that preconfs add value to typical Ethereum blocks.~\cite{W:MeasuringValidatorEconomics} The study further points out that one has to be careful when looking at simple averages since they get heavily skewed by large outlier blocks with very high rewards.}
     
     \subsubsection{Execution Preconfs \& Proposer Revenue}\label{sec:execpreconfproposerrevenue}
     Unlike inclusion preconfs, execution preconfs must \ks{ be executed} in a specific way, typically at a specific position in a specific sequence of transactions. This stands as a significant restriction for a preconfer, with significant implications on a proposer's expected revenue when offering execution preconfs. The models presented in \cite{W:EstimatingtheRevenuefromIndependentSub-SlotAuctionPreconfirmations, W:AnalysingExpectedProposerRevenuefromPreconfirmations, W:PreconfirmationsundertheNOlens} represent the main contributions in the space at time of writing. 
