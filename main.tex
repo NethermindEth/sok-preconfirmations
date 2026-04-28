@@ -98,7 +98,7 @@
 %%%%%%% 
 
 
-\title{SoK: Preconfirmations} 
+\title{SoK: Preconfirmations\footnote{© 2026 IEEE.  Personal use of this material is permitted.  Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works.}}
 \renewcommand\Authsep{, }
 \renewcommand\Authands{, }
 
@@ -124,7 +124,7 @@
  
 In recent years, significant research efforts have focused on improving blockchain throughput and confirmation speeds without compromising security. While decreasing the time it takes for a transaction to be included in the blockchain ledger enhances user experience, a fundamental delay still remains between when a transaction is issued by a user and when its inclusion is confirmed in the blockchain ledger. This delay limits user experience gains through the confirmation uncertainty it brings for users. This inherent delay in conventional blockchain protocols has led to the emergence of preconfirmation protocols -- protocols that provide users with early guarantees of eventual transaction confirmation.
 
-This article presents a Systematization of Knowledge (SoK) on preconfirmations\footnote{The latest version of this document is hosted on GitHub at: https://github.com/NethermindEth/sok-preconfirmations}. We present the core terms and definitions needed to understand preconfirmations, outline a general framework for preconfirmation protocols, and explore the economics and risks of preconfirmations. Finally, we survey and apply our framework to several implementations of real-world preconfirmation protocols, bridging the gap between theory and practice.
+This article presents a Systematization of Knowledge (SoK) on preconfirmations\footnote{Another version of this document is hosted on GitHub at: https://github.com/NethermindEth/sok-preconfirmations. This paper has been accepted to IEEE ICBC 2026. The accepted version TBA.}. We present the core terms and definitions needed to understand preconfirmations, outline a general framework for preconfirmation protocols, and explore the economics and risks of preconfirmations. Finally, we survey and apply our framework to several implementations of real-world preconfirmation protocols, bridging the gap between theory and practice.
  
  
  
@@ -558,15 +558,10 @@ That being said, this problem of maximizing the value of blocks given some const
 \subsubsection{Fulfillment Tradeoffs: Proposer vs Gateway}
 \label{delivery_tradeoffs}
 
-Proposers are perfectly placed to provide preconfs, given their ability to include preconfs in their own blocks. Gateways on the other hand require additional machinery to ensure that a proposer proposes a block which includes all preconfs provided by the gateway. The relationship between the proposer and gateway is crucial to the mechanism that must be used to fulfill gateway preconfs. 
-
-If the gateway trusts the proposer, a straightforward message-passing algorithm suffices to fulfill preconfs from gateway to proposer to the blockchain ledger. Depending on whether or not the gateway is also tasked with sourcing the block for the proposer will dictate the time at which the preconfs must be sent back to the proposer, or whether the proposer even needs to observe the preconfs. In the case where the gateway also sources the proposer's block, for example, if the gateway also runs MEV-Boost, the proposer can simply sign the block header and have the gateway propagate the final block to the P2P network, as in MEV-Boost.
-
-If a gateway does not trust a proposer, the gateway would require cryptoeconomic guarantees that the proposer will propose a block that includes all preconfs provided by the gateway. Cryptoeconomic guarantees from the proposer are especially important when the gateway is liable to be punished in the case where preconfs are not fulfilled. Such a guarantee could include shared punishment when preconfs are not fulfilled, or the existence of a mutually trusted overseer to arbitrate faults \cite{W:PreconfirmationFairExchange,W:FaultAttribution}. 
-
-In \cite{gateway_trust_liveness}, it is proposed to penalise entities based on the specific reason a preconf was not fulfilled. If no block was published for the relevant slot, the proposer is penalized. Conversely, if a block was proposed but the preconf was still not fulfilled, the gateway is held responsible and penalized.
-
-
+Proposers are well placed to provide preconfs, since they can include them directly in their own blocks—unlike gateways.  For gateway preconfs, the proposer–gateway relationship is key: if the gateway trusts the proposer, straightforward message-passing algorithm  suffices; otherwise, cryptoeconomic guarantees are needed to ensure all gateway-issued preconfs are included, especially if the gateway is liable to be punished for failures. Such a guarantee could include shared punishment when preconfs are not fulfilled, or the existence of a mutually trusted overseer to arbitrate faults \cite{W:PreconfirmationFairExchange,W:FaultAttribution}. 
+%In \cite{W:Basedpreconfirmations, gateway_trust_liveness}, it is proposed to penalize entities based on the specific reason why a preconf was not fulfilled.
+%If no block was proposed for the relevant slot, the proposer is better candidate for slashing. Conversely, if a block was proposed but the preconf was still not fulfilled, the gateway is more likely at a fault (depending on the implementation the proposer could still be at a fault).
+Depending on whether or not the gateway is also tasked with sourcing the block for the proposer will dictate when or if the preconfs must be sent back to the proposer. In the case where the gateway also sources the proposer's block, for example, if the gateway also runs Constraints API~\cite{W:ConstraintsAPISpecification} or Commit-Boost \cite{CommitBoostRepo}, the proposer can simply sign the block header and have the gateway propagate the final block to the P2P network, as in MEV-Boost.
 \subsubsection{Designing Robust Fulfillment Mechanisms}\label{robust_delivery}
 
     In any preconf protocol, it is possible that a preconfer fails to fulfill their preconfs. Although this non-fulfillment may be malicious, non-fulfillment of preconfs can also be unintentional. Some thought has been given to protecting against unintentional failures to fulfill preconfs. The authors of \cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs} suggest that preconfers can collaborate with subsequent preconfers through revenue sharing to preconf the same transaction sequences in the event that the original preconfer fails to fulfill the preconfs themselves. This approach is termed \textbf{chaining} preconfs. Although the exact incentives and guarantees of chaining are unexplored, chaining provides a protocol design direction to protect preconfers and their users from the risks of failing to fulfill preconfs. 
@@ -826,56 +821,13 @@ The remainder of this section considers how preconfs affect proposer revenues, a
     The risk of being slashed is relevant for several entities in a preconf protocol: Preconfers, who post slashable collateral; proposers, who inherit penalties from preconfers; and the underlying blockchain, whose economic security may be affected by mass slashing. 
     % Subsection intro explains high level what the risk/consideration is, and to which roles the risk/consideration applies
 
-    \subsubsection{Slashing: Preconfer}
+    \subsubsection{Slashing: Preconfer and Proposer}
     \label{risk_slashing:preconfer}
         %V3------
-        As described in \hyperref[preconfer_faults_and_punishing_conditions]{Section~\ref{preconfer_faults_and_punishing_conditions}}, preconfers risk losing some or all of their slashable collateral for committing faults. 
-        Safety and liveness faults are provable as they involve a direct contradiction between a signed preconf response and what is observable in the blockchain ledger (assuming a common view of the entities on the blockchain ledger). %\qb{I used actors instead of parties for c7}
-        While proof by contradiction is sufficient to slash a preconfer committing a safety fault, or proposer committing a liveness fault (assuming the preconf registry can access relevant blockchain ledger data), 
-        a trusted overseer is required to attribute idleness faults (see \hyperref[preconfer_punishment]{Section~\ref{preconfer_punishment}}).
-        The risk of being slashed depends on the type of fault the preconfer (perhaps unintentionally) committed:
-            \begin{itemize}
-                \item \textbf{Safety fault:} Safety faults should never be committed by an honest preconfer who is also a proposer (see \cite{W:Basedpreconfirmations} and Section~\ref{preconfer_faults_and_punishing_conditions}). In such cases, the punishment is expected to be severe. When the preconfer is not a proposer, the preconfer may risk being slashed for a safety fault (e.g., \cite{gateway_trust_liveness}) if they either fail to make the proposer aware of any preconfed transactions in time for proposal, or the proposer omits specific preconfed transactions at proposal time and no fault attribution mechanism exists to exonerate the preconfer. Fault attribution can, for example, be implemented by having a relay honestly report the list of preconfed transactions that was made known to the proposer \cite{W:FaultAttribution}.
-                \item \textbf{Idleness fault:} A preconfer can be slashed even without malicious intent, for example, if their server is down or there is a network issue and they fail to publish preconfs on time. In a protocol with a permissioned overseer, there is the additional risk that a malicious overseer may unfairly slash the preconfer even when no fault is actually committed.
-                \item \textbf{Liveness fault:} Usually, only if the preconfer is a proposer, the preconfer is  punished for a liveness fault (for more details, see\hyperref[preconfer_punishment]{ Section \ref{preconfer_punishment}}). When the preconfer is not a proposer, liveness faults usually result in penalties for the proposer (e.g., \cite{gateway_trust_liveness}).
-            \end{itemize}
-            % \todocm{ I added liveness faults and edited safety faults paragraph and 7.1.2 to be consistent with the following If the preconfer is not the proposer, then usually, the preconfer is penalized for safety faults and the proposer for liveness faults \cite{gateway_trust_liveness} if there is no fault attribution mechanism.}
-
-    \subsubsection{Slashing: Proposer} 
-    \label{risk_slashing:proposer}
-        %Proposers are ultimately responsible for fulfillment.  % ks{adjust to describe the cases mentioned in 5.5.3. For example the case when the gateway is penalized when the preconf is not fulfilled, or both the gateway and the proposer are penalized depending on the type of the fault: liveness or safety}, including:
-        %Generally, proposers who delegate preconfing (see \hyperref[sec:preconfirmers_preliminaries]{Section~\ref{sec:preconfirmers_preliminaries}}) are liable to be slashed for any faults committed by the gateway \todocm{as mentioned in 7.1.1 and \cite{gateway_trust_liveness} for safety faults the preconfer is usually penalized not the proposer. }.
-        % As described in \hyperref[delivery_tradeoffs]{Section~\ref{delivery_tradeoffs}} the relationship between the proposer and gateway is critical in determining the significance of the slashing risk for the proposer.
-       %  If the gateway does not trust a proposer, the proposer must provide cryptoeconomic guarantees as assurance they will fulfill the gateway's preconfs. These guarantees involve shared punishment, or a mutually trusted overseer to arbitrate faults. \todoqb{review}
-        The risk of a proposer being slashed for their own or the gateway's misbehavior depends on whether a safety or liveness fault is committed:
-            \begin{itemize}
-                \item \textbf{Safety fault:} As previously mentioned, if the proposer has delegated preconfing to a gateway and no fault attribution mechanism is in place \cite{W:FaultAttribution}, safety faults typically result in the preconfer -- rather than the proposer -- being penalized (e.g., \cite{gateway_trust_liveness}).
-                
-                % \iffalse \ks{This paragraph needs to be adapted. in 7.1.1 was mentioned that When the preconfer is not the proposer, for safety faults, the preconfer is penalized except for when their is a fault attribution mechanism that proves that the preconfer is honest. In this paragraph it says the opposite that the proposer is penalized instead. According to \cite{gateway_trust_liveness} the correct is what is said in 7.1.1. However, as other agreements may exist between the preconfer and the proposer for who is penalized it is better to use usually, etc.   } The proposer risks being slashed for a safety fault if they equivocate when constructing the final block and in doing so violate any of the predicates committed to by the gateway. 
-                % The proposer may also be slashed if they propose a block that does not fulfill all preconfs because the preconfer did not make the full list of preconfed transactions available in time. \fi
-                %As with the preconfer (see Section~\ref{risk_slashing:preconfer}), there must be a fault attribution mechanism to distinguish between these cases and fairly exonerate the proposer when the missing preconfs are not their fault.
-
-                \item \textbf{Liveness fault:} Liveness faults are missed slots and the fault of the proposer. The proposer is usually penalized even if they have delegated preconfing to a gateway, except in cases where a fault attribution mechanism is in place to detect malicious behavior by the preconfer, such as delays in sending preconfs. \par
-                The proposer risks being slashed even for missing slots accidentally (see \hyperref[preconfer_faults_and_punishing_conditions]{Section~\ref{preconfer_faults_and_punishing_conditions}}). To protect themselves against this risk, proposers could request that preconfers chain their preconfs \cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}, allowing preconfs to be fulfilled by subsequent proposers in the lookahead in return for a proportion of the tip revenue. Preconf protocols can amplify the economic impact of missing slots in L1, where proposers already incur the opportunity cost of missing out on proposer rewards and revenue.
-                % If there is a liveness dependency on an actor in the preconf pipeline -- such as the overseer -- the proposer risks being slashed for livneness faults. 
-                %Consequently, a proposer's decision to participate in a preconf protocol requires careful assessment of the increased slashing risks they face when delegating preconfing.
-            \end{itemize}
-
-        % \qb{\begin{itemize}
-        %     \item Proposer proposes block but preconfs not fulfilled by block: gateway is penalized
-        %     \item Liveness fault of proposer = no block published for respective slot = proposer is penalized
-        %     \item Liveness fault of gateway = either block proposed but preconfs not fulfilled (gateway penalized) or block not proposed because of liveness dependency on gateway (proposer and gateway penalized) 
-        %     \item Safety fault = gateway penalized if sourcing whole block, proposer penalized if constructing final block incorrectly
-        % \end{itemize}}
-   
-        % In this case, all slashing risks faced by the proposer would be inherited from the preconfer. \cm{Assume the reader doesn't know what you're talking about. This statement and logical implication need to be expanded. What does it mean to be indirectly liable? What's the mechanism that would do this?}.
-       %  Moreover, slashing tied to preconfing increases the overall penalty for proposers in the event of a liveness fault. \qb{not generally true last sentence - reword} \cm{what is the "other" liveness punishment for proposers, be explicit.}
-
-        % \begin{itemize}
-        %     \item May be accountable for preconfers actions in form of slashing if preconfer doesn't fulfil their commitments. \cm{In this case, all preconfer slashing risks would be inherited from/euqivalent to the preconfer's.}
-        %     \item single-proposer L2s don't have to worry about this risk (in this context, proposer == preconfer) as they are a trusted entity \cm{not sure if necessary to mention here, semi-implied in prev point}
-        %     \item Classic equivocation means preconf slashing increases their overall penalties 
-        % \end{itemize}
+        The risk of being slashed depends on the type of fault the preconfer or proposer (perhaps unintentionally) committed (see \cite{W:Basedpreconfirmations}): (i) \textbf{Safety fault:} Safety faults should never be committed by an honest preconfer who is also a proposer (see \cite{W:Basedpreconfirmations} and Section~\ref{preconfer_faults_and_punishing_conditions}). 
+        When the preconfer is not a proposer, both the preconfer and the proposer can be responsible for a safety fault. The exact way depends on the implementation but an example is the following:
+        the preconfer fails to make the proposer aware of any preconfed transactions in time for proposal or the proposer omits specific preconfed transactions at proposal time. To reduce the risk that a party is penalized without performing a fault, a fault attribution mechanism can be implemented. One example is to have a relay honestly report the list of preconfed transactions that was made known to the proposer in time \cite{W:FaultAttribution}; (ii) \textbf{Idleness fault:} If idleness faults are penalized through slashing, a preconfer can be slashed even without malicious intent, for example, if their server is down or there is a network issue and they fail to publish preconfs on time. In a protocol with a permissioned overseer, there is the additional risk that a malicious overseer may unfairly slash the preconfer even when no fault is actually committed; (iii) \textbf{Liveness fault:} For liveness faults, the proposer is a stronger candidate for slashing, as it is more likely to have misbehaved. However, a fault attribution mechanism could again reduce the risk of unfairly penalizing the proposer if the preconfer delayed sending preconfs. 
+                The proposer risks being slashed even for missing slots accidentally. To protect themselves against this risk, proposers could request that preconfers chain their preconfs \cite{W:AvoidingAccidentalLivenessFaultsforBasedPreconfs}, allowing preconfs to be fulfilled by subsequent proposers in the lookahead in return for a proportion of the tip revenue. Preconf protocols can amplify the economic impact of missing slots in L1, where proposers already incur the opportunity cost of missing out on proposer rewards and revenue.
 
     \subsubsection{Slashing: Blockchain}
     \label{risk_slashing:protocol}
@@ -905,30 +857,19 @@ The remainder of this section considers how preconfs affect proposer revenues, a
     % Subsection intro explains high level what the risk/consideration is, and to which roles the risk/consideration applies
     % \cm{reputation, proposer: preconfer actions may hold proposer accountable , protocol: preconfs/preconfers may damage ethos of chain} 
     %\ks{For the next two paragraphs, a fault attribution mechanism that is accessible by the users could be mentioned as a counter measure }
-    \subsubsection{Reputation: Preconfer}
+    \subsubsection{Reputation: Preconfer and Proposer}
     \label{risk_reputation:preconfer}
-    The reputation of a preconfer can be damaged by any of the faults they commit. The risk of diminished reputation extends to the case where a preconfer is perceived to be responsible for non-fulfillment, although the proposer had committed a (potentially accidental) liveness fault (see Section~\ref{risk_slashing:proposer}). Recall that in such cases, it is typically the proposer -- not the preconfer -- that is penalized by the preconf protocol. However, users may not take the time to determine which entity actually committed the fault, especially in the absence of a fault attribution mechanism. Diminished reputation could make users, or their wallets acting as permissionless overseers, less likely to send future preconf requests to the misbehaving preconfer. This is known as reduced orderflow and is described in detail in \hyperref[punishments]{Section~\ref{punishments}}.
-    By reducing orderflow to preconfers with diminished reputation, affected preconfers are unable to capture the preconf tip revenue they otherwise would have received.  
-
-    The risk of reputational damage for a preconfer can extend beyond any foregone revenue within the preconf protocol itself to other protocols or business activities in which the preconfer is engaged. 
-    Some preconfers may choose to operate their preconf services using separate entities, thereby mitigating the risk that diminished preconfer reputation spreads to the preconfer's identity elsewhere.
+    The reputation of both a preconfer and a proposer can be harmed by any faults they commit. This risk of diminished reputation also arises when a party is perceived as responsible for non-fulfillment even though the other party committed the fault. %For example (i) a preconfer is perceived as responsible for non-fulfillment even though the proposer committed a liveness fault, or (ii) a proposer is blamed for non-fulfillment despite the preconfer having committed a safety fault.
+    Even if the party penalized for a safety or liveness fault is the one that actually committed it, users may not take the time to determine which party is truly at fault -- especially in the absence of a fault-attribution mechanism. Diminished reputation could cause users to send fewer future preconf requests to the misbehaving preconfer %(see reduced orderflow in Section~\ref{punishments}), 
+    which would reduce preconf tip revenue. Moreover, if a proposer runs multiple validators, reputation loss can affect all of them. 
+    %By reducing orderflow to preconfers with diminished reputation, affected preconfers are unable to capture the preconf tip revenue they otherwise would have received.  
+    Reputational damage can extend beyond any foregone revenue within the preconf protocol itself to other protocols or business activities in which the preconfer or the proposer is engaged. To mitigate this risk, some preconfers or proposers may choose to operate their services using separate entities. 
+    % thereby mitigating the risk that diminished preconfer reputation spreads to the preconfer's identity elsewhere.
     
         % \begin{itemize}
         %     \item Preconfers can also be punished reputationally, which is an ex-post punishment in L1s and based L2s, and for non-based single-proposer L2s 
         %     \item Loss in reputation has economic consequences in the form of reduced orderflow. \cm{clarify that loss of rep due to preconfing may hurt reputation elsewhere (in other protocols/systems). Mitigation: preconfers may establish separate entities to avoid reputational loss across multiple areas.} 
         % \end{itemize}
-
-    \subsubsection{Reputation: Proposer}
-    \label{risk_reputation:proposer}
-        Proposers risk being held accountable for the actions of the preconfers they delegate to, as users are unlikely to distinguish between the two entities. 
-        The proposer’s reputation may be harmed if the preconfer commits a safety fault -- even if the proposer is not at fault and is not penalized by the preconf protocol.
-        Diminished reputation of proposers by association with malicious or faulty preconfers may be of particular concern for entities operating many validators as part of a larger set of business offerings. 
-        This is because the previously described risk of reputation spread from misbehavior within a preconf protocol to other, external activities in which the preconfer is engaged, applies. % i'm thinking in terms of someone like Coinbase, though anyways they have the sophistication to just preconf themselves.
-    
-        % \begin{itemize}
-        %     \item Proposer may be held accountable for preconfer actions / users blame them for preconfer's fault
-        % \end{itemize}
-
     \subsubsection{Reputation: Blockchain}
     \label{risk_reputation:blockchain}
         The behavior of entities in and specific implementation of preconf protocols could affect the underlying blockchain's reputation.
@@ -1188,7 +1129,7 @@ In the following sub-sections we explore in more detail the centralization press
             Users submit requests and purchase preconfs through the API of ETHGas Exchange.  Proposers can sell preconfs directly through ETHGas Exchange while less sophisticated proposers may choose to delegate preconfing process to a third party. Inclusion preconfs can be purchased up to 32 slots in advance, while whole block commitments can be secured up to 64 slots in advance~\cite{W:ETHGasDocs-CommitmentBuyers,W:IntroducingETHGasandRealtimeProposerCommitmentstotheLidoCommunity}.
                         
             \item \textbf{Response:}
-            After a request is received and accepted, the elected L1 proposer for the target slot uses their validator key to sign a cryptographic commitment to the user's request. This signed message, which is delivered to the buyer via the ETHGas Exchange, serves as the preconf~\cite{W:IntroducingETHGasandRealtimeProposerCommitmentstotheLidoCommunity,W:ETHGasDocs-TheETHGasArchitecture}.
+            After a request is received and accepted, the elected L1 proposer for the target slot uses their validator key to sign a cryptographic commitment to the user's request. This signed message, which is delivered to the buyer via the ETHGas Exchange, serves as the ~\cite{W:IntroducingETHGasandRealtimeProposerCommitmentstotheLidoCommunity,W:ETHGasDocs-TheETHGasArchitecture}.
             
             \item \textbf{Fulfillment:}
             The ETHGas Exchange streams preconfs to block builders. The builders then construct a valid block that respects these commitments and submit it to a relay. The proposer fetches the header of the most profitable block from the relay, signs it, and submits it to the network. The relay then publishes the full block body. The relay can also deliver a fall-back block in case a builder fails to produce a conforming block in time~\cite{W:ETHGasDocs-BuildersSequencers,W:ETHGasDocs-Relays}.
